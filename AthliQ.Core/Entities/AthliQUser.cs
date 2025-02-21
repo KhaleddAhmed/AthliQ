@@ -17,6 +17,6 @@ namespace AthliQ.Core.Entities
         public bool IsAccepted { get; set; } = false;
         public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime ModifiedAt { get; set; }
+        public DateTime? ModifiedAt { get; set; }
     }
 }
