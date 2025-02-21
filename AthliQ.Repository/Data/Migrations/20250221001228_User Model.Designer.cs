@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AthliQ.Repository.Data.Migrations
 {
     [DbContext(typeof(AthliQDbContext))]
-    [Migration("20250220224615_AddUserMigration")]
-    partial class AddUserMigration
+    [Migration("20250221001228_User Model")]
+    partial class UserModel
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -75,7 +75,7 @@ namespace AthliQ.Repository.Data.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTime>("ModifiedAt")
+                    b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("NormalizedEmail")
