@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AthliQ.Core.Entities.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace AthliQ.Core.Entities
@@ -18,5 +19,8 @@ namespace AthliQ.Core.Entities
         public bool IsDeleted { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? ModifiedAt { get; set; }
+
+        public virtual ICollection<UserClub> UserClubs { get; set; }
+        public virtual ICollection<Child> Childs { get; set; }
     }
 }
