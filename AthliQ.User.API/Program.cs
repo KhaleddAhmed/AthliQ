@@ -1,7 +1,15 @@
+using System.Text;
 using AthliQ.Core.Entities;
+using AthliQ.Core.Mapping;
+using AthliQ.Core.Service.Contract;
 using AthliQ.Repository.Data.Contexts;
+using AthliQ.Repository.Data.Seed;
+using AthliQ.Service.Services.Token;
+using AthliQ.Service.Services.User;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AthliQ.User.API
 {
@@ -27,6 +35,44 @@ namespace AthliQ.User.API
                 .Services.AddIdentity<AthliQUser, IdentityRole>()
                 .AddEntityFrameworkStores<AthliQDbContext>();
 
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<ITokenService, TokenService>();
+
+            builder
+                .Services.AddAuthentication(option =>
+                {
+                    option.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    option.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters =
+                        new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                        {
+                            ValidateIssuer = true,
+                            ValidIssuer = builder.Configuration["JWT:Issuer"],
+                            ValidateAudience = true,
+                            ValidAudience = builder.Configuration["JWT:Audience"],
+                            ValidateLifetime = true,
+                            ValidateIssuerSigningKey = true,
+                            IssuerSigningKey = new SymmetricSecurityKey(
+                                Encoding.UTF8.GetBytes(builder.Configuration["JWT:Key"])
+                            ),
+                        };
+                });
+
+            builder.Services.AddCors(o =>
+            {
+                o.AddPolicy(
+                    "MyCors",
+                    c =>
+                    {
+                        c.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+                    }
+                );
+            });
+
             var app = builder.Build();
 
             using var scope = app.Services.CreateScope();
@@ -40,6 +86,7 @@ namespace AthliQ.User.API
             try
             {
                 await _dbContext.Database.MigrateAsync();
+                await RoleDbContextSeed.SeedRoleAsync(roleManager);
             }
             catch (Exception ex)
             {
@@ -55,8 +102,9 @@ namespace AthliQ.User.API
             }
 
             app.UseHttpsRedirection();
-
+            app.UseAuthentication();
             app.UseAuthorization();
+            app.UseCors("MyCors");
 
             app.MapControllers();
 
