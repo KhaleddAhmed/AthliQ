@@ -82,11 +82,13 @@ namespace AthliQ.User.API
             var _dbContext = services.GetRequiredService<AthliQDbContext>();
             var loggerFactory = services.GetRequiredService<ILoggerFactory>();
             var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+            var userManager = services.GetRequiredService<UserManager<AthliQUser>>();
 
             try
             {
                 await _dbContext.Database.MigrateAsync();
                 await RoleDbContextSeed.SeedRoleAsync(roleManager);
+                await AdminDbContextSeed.SeedAdminAsync(userManager);
             }
             catch (Exception ex)
             {
