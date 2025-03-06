@@ -29,6 +29,10 @@ namespace AthliQ.Repository.Data.Configurations
                    .HasForeignKey(S => S.CategoryId)
                    .OnDelete(DeleteBehavior.Cascade);
 
+            builder.HasMany(C => C.Tests)
+                   .WithOne(T => T.Category)
+                   .HasForeignKey(T => T.CategoryId)
+                   .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
