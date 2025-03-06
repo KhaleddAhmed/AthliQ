@@ -13,6 +13,6 @@ namespace AthliQ.Core.Entities.Models
         public string Description { get; set; }
         public virtual ICollection<Sport> Sports { get; set; }
         public virtual ICollection<ChildResult> ChildCategories { get; set; }
-
+        public virtual ICollection<Test> Tests { get; set; }
     }
 }
