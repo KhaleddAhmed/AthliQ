@@ -7,6 +7,7 @@ using AthliQ.Repository;
 using AthliQ.Repository.Data.Contexts;
 using AthliQ.Repository.Data.Seed;
 using AthliQ.Service.Services.Categories;
+using AthliQ.Service.Services.Tests;
 using AthliQ.Service.Services.Token;
 using AthliQ.Service.Services.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -35,6 +36,7 @@ namespace AthliQ.User.API
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
+            builder.Services.AddScoped<ITestService, TestService>();
 
             builder.Services.AddDbContext<AthliQDbContext>(options =>
             {
