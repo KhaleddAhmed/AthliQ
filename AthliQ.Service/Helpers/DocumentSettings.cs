@@ -11,27 +11,34 @@ namespace AthliQ.Service.Helpers
     {
         public static async Task<string> UploadFile(IFormFile file, string folderName)
         {
-            //1.Get the Located Folder Path
-            //string folderPath = $"C:\\Users\\Khale\\Source\\Repos\\RouteC41.G02\\RouteC41.G02.PL\\wwwroot\\Files\\{folderName}";
+            if (file == null || file.Length == 0)
+                return null;
+
+            // Get the Located Folder Path
             string folderPath = Path.Combine(
                 Directory.GetCurrentDirectory(),
                 "wwwroot",
                 folderName
             );
 
+            // Ensure directory exists
             if (!Directory.Exists(folderPath))
                 Directory.CreateDirectory(folderPath);
 
-            //2.Get File Name And Make it Unique
-            string fileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-
-            //3.Get File Path
+            // Generate file name based on the content to avoid duplication
+            string fileName = file.FileName;
             string filePath = Path.Combine(folderPath, fileName);
 
-            //4.Save file as streams[Data Per Time]
-            using var fileStream = new FileStream(filePath, FileMode.Create);
+            // Check if the file already exists
+            if (File.Exists(filePath))
+            {
+                return fileName; // Return existing file name without uploading
+            }
 
+            // Save file as stream
+            using var fileStream = new FileStream(filePath, FileMode.Create);
             await file.CopyToAsync(fileStream);
+
             return fileName;
         }
 
