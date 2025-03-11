@@ -9,11 +9,11 @@ namespace AthliQ.Repository.Data.Configurations
         public void Configure(EntityTypeBuilder<UserClub> builder)
         {
             builder.HasKey(UC => new { UC.AthliQUserId, UC.ClubName });
-
-            builder.HasOne(UC => UC.User)
-                   .WithMany(U => U.UserClubs)
-                   .HasForeignKey(UC => UC.AthliQUserId)
-                   .OnDelete(DeleteBehavior.Cascade);
+            builder
+                .HasOne(UC => UC.User)
+                .WithMany(U => U.UserClubs)
+                .HasForeignKey(UC => UC.AthliQUserId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
