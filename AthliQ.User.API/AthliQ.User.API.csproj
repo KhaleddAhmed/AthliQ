@@ -19,4 +19,8 @@
     <ProjectReference Include="..\AthliQ.Service\AthliQ.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\Images\" />
+  </ItemGroup>
+
 </Project>

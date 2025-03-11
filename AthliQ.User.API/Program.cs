@@ -7,6 +7,7 @@ using AthliQ.Repository;
 using AthliQ.Repository.Data.Contexts;
 using AthliQ.Repository.Data.Seed;
 using AthliQ.Service.Services.Categories;
+using AthliQ.Service.Services.Children;
 using AthliQ.Service.Services.Sports;
 using AthliQ.Service.Services.Tests;
 using AthliQ.Service.Services.Token;
@@ -38,7 +39,8 @@ namespace AthliQ.User.API
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<ITestService, TestService>();
-            builder.Services.AddScoped<ISportService , SportService>();
+            builder.Services.AddScoped<ISportService, SportService>();
+            builder.Services.AddScoped<IChildService, ChildService>();
 
             builder.Services.AddDbContext<AthliQDbContext>(options =>
             {
