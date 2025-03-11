@@ -148,7 +148,7 @@ namespace AthliQ.Service.Services.Categories
 
             //7.Return Response
             genericResponse.StatusCode = StatusCodes.Status200OK;
-            genericResponse.Message = "The Category Is Successfully Retrieved";
+            genericResponse.Message = "The Category Has Successfully Been Retrieved";
             genericResponse.Data = mappedCategory;
 
             return genericResponse;

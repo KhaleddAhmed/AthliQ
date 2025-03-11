@@ -22,5 +22,38 @@ namespace AthliQ.User.API.Controllers
             var sport = await _sportService.CreateSportAsync(createSportDto);
             return Ok(sport);
         }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetSport")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var sport = await _sportService.GetSportAsync(id);
+            return Ok(sport);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet("GetAllSports")]
+        public async Task<IActionResult> GetAll(int? categoryId)
+        {
+            var sports = await _sportService.GetAllSportsAsync(categoryId);
+            return Ok(sports);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("UpdateSport")]
+        public async Task<IActionResult> Update(UpdateSportDto updateSportDto)
+        {
+            var sport = await _sportService.UpdateSportAsync(updateSportDto);
+            return Ok(sport);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpDelete("DeleteSport")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var sport = await _sportService.DeleteSportAsync(id);
+            return Ok(sport);
+        }
+
     }
 }

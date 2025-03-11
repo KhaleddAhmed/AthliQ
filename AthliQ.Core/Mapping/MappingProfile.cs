@@ -38,8 +38,10 @@ namespace AthliQ.Core.Mapping
 
             #region Sport
             CreateMap<CreateSportDto, Sport>();
-            CreateMap<Sport, GetSportDto>().ForMember(dto => dto.CategoryName,
+            CreateMap<Sport , GetSportDto>().ForMember(dto => dto.CategoryName,
                                                        options => options.MapFrom(s => s.Category.Name));
+            CreateMap<Sport, GetAllSportsDto>();
+            CreateMap<UpdateSportDto , Sport>();
             #endregion
         }
     }

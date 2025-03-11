@@ -11,5 +11,13 @@ namespace AthliQ.Core.Service.Contract
     public interface ISportService
     {
         Task<GenericResponse<GetSportDto>> CreateSportAsync(CreateSportDto createSportDto);
+
+        Task<GenericResponse<GetSportDto>> GetSportAsync(int id);
+
+        Task<GenericResponse<List<GetAllSportsDto>>> GetAllSportsAsync(int? categoryId);
+
+        Task<GenericResponse<GetSportDto>> UpdateSportAsync(UpdateSportDto updateSportDto);
+
+        Task<GenericResponse<bool>> DeleteSportAsync(int id);
     }
 }

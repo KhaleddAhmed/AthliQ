@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AthliQ.Core.DTOs.Category
+namespace AthliQ.Core.DTOs.Sport
 {
-    public class GetAllCategoriesDto
+    public class GetAllSportsDto
     {
         public int Id { get; set; }
         public string Name { get; set; }
