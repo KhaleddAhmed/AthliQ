@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AthliQ.Core;
 using AthliQ.Core.DTOs.Auth;
 using AthliQ.Core.Entities;
 using AthliQ.Core.Entities.Models;
@@ -20,18 +21,21 @@ namespace AthliQ.Service.Services.User
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
         private readonly SignInManager<AthliQUser> _signInManager;
+        private readonly IUnitOfWork _unitOfWork;
 
         public UserService(
             UserManager<AthliQUser> userManager,
             IMapper mapper,
             ITokenService tokenService,
-            SignInManager<AthliQUser> signInManager
+            SignInManager<AthliQUser> signInManager,
+            IUnitOfWork unitOfWork
         )
         {
             _userManager = userManager;
             _mapper = mapper;
             _tokenService = tokenService;
             _signInManager = signInManager;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<bool> CheckEmailExistAsync(string email)
@@ -112,6 +116,20 @@ namespace AthliQ.Service.Services.User
             if (result.Succeeded)
             {
                 await _userManager.AddToRoleAsync(mappedUser, "User");
+                if (registerDto.Clubs != null)
+                {
+                    foreach (var club in registerDto.Clubs)
+                    {
+                        var userclub = new UserClub
+                        {
+                            AthliQUserId = mappedUser.Id,
+                            ClubName = club,
+                        };
+
+                        await _unitOfWork.Repository<UserClub, int>().AddAsync(userclub);
+                        await _unitOfWork.CompleteAsync();
+                    }
+                }
             }
 
             if (!result.Succeeded)

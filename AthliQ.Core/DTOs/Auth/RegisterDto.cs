@@ -35,5 +35,7 @@ namespace AthliQ.Core.DTOs.Auth
         [Required(ErrorMessage = "Phone is Required")]
         [Phone]
         public string PhoneNumber { get; set; }
+
+        public List<string> Clubs { get; set; } = new List<string>();
     }
 }
