@@ -10,8 +10,15 @@ namespace AthliQ.Core.Service.Contract
 {
     public interface ICategoryService
     {
-        Task<GenericResponse<GetCategoryDto>> CreateCategoryAsync(
-            CreateCategoryDto createCategoryDto
-        );
+        Task<GenericResponse<GetCategoryDto>> CreateCategoryAsync(CreateCategoryDto createCategoryDto);
+
+        Task<GenericResponse<GetCategoryDto>> GetCategoryAsync(int id);
+        Task<GenericResponse<GetCategoryWithSportsDto>> GetCategoryWithSportsAsync(int id);
+
+        Task<GenericResponse<List<GetAllCategoriesDto>>> GetAllCategoriesAsync();
+
+        Task<GenericResponse<GetCategoryDto>> UpdateCategoryAsync(UpdateCategoryDto updateCategoryDto);
+
+        Task<GenericResponse<bool>> DeleteCategoryAsync(int id);
     }
 }

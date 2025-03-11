@@ -9,16 +9,16 @@ namespace AthliQ.Core.DTOs.Category
 {
     public class CreateCategoryDto
     {
-        [Required]
-        [StringLength(50)]
+        [Required(ErrorMessage = "Category Name Is Required")]
+        [StringLength(20 , ErrorMessage = "Category Name Can Not Contain More Than 20 Character")]
         public string Name { get; set; }
 
-        [Required]
-        [StringLength(50)]
+        [Required(ErrorMessage = "Category Arabic Name Is Required")]
+        [StringLength(40, ErrorMessage = "Category Name Can Not Contain More Than 40 Character")]
         public string ArabicName { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required(ErrorMessage = "Category Description Is Required")]
+        [StringLength(200, ErrorMessage = "Category Name Can Not Contain More Than 200 Character")]
         public string Description { get; set; }
     }
 }
