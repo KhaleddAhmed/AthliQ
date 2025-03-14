@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using AthliQ.Core.DTOs.Child;
 using AthliQ.Core.Service.Contract;
+using AthliQ.User.API.Attrbiutes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,25 @@ namespace AthliQ.User.API.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _childService.CreateChildAsync(userId, dto);
+            return Ok(result);
+        }
+
+        [HttpGet("ViewAllChildren")]
+        [Authorize(Roles = "User")]
+        [Cache(1)]
+        public async Task<ActionResult> ViewAll(
+            string? search,
+            int? pageSize = 5,
+            int? pageIndex = 1
+        )
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _childService.ViewAllChildrenAsync(
+                userId,
+                search,
+                pageSize,
+                pageIndex
+            );
             return Ok(result);
         }
     }
