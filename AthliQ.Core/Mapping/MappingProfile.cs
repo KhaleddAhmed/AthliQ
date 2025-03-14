@@ -67,6 +67,7 @@ namespace AthliQ.Core.Mapping
         private void MapChild()
         {
             CreateMap<CreateChildDto, Child>();
+            CreateMap<Child, GetAllChildDto>();
         }
     }
 }

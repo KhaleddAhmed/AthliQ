@@ -11,6 +11,7 @@ using AthliQ.Core.Service.Contract;
 using AthliQ.Service.Helpers;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
 
 namespace AthliQ.Service.Services.Children
 {
@@ -164,6 +165,114 @@ namespace AthliQ.Service.Services.Children
             genericResponse.StatusCode = StatusCodes.Status200OK;
             genericResponse.Message = "Failed to Create Child and its test Results";
             genericResponse.Data = false;
+            return genericResponse;
+        }
+
+        public async Task<GenericResponse<List<GetAllChildDto>>> ViewAllChildrenAsync(
+            string userId,
+            string? search,
+            int? pageSize = 5,
+            int? pageIndex = 1
+        )
+        {
+            var genericResponse = new GenericResponse<List<GetAllChildDto>>();
+
+            if (search != null)
+            {
+                var SearchedChildren = await _unitOfWork
+                    .Repository<Child, int>()
+                    .Get(c =>
+                        c.AthliQUserId == userId
+                        && c.Name.ToLower().Contains(search.ToLower())
+                        && c.IsDeleted != true
+                    )
+                    .Result.ToListAsync();
+
+                if (SearchedChildren.Count == 0)
+                {
+                    genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                    genericResponse.Message = "No Children with this name";
+
+                    return genericResponse;
+                }
+
+                var mappedFilteredChildren = _mapper.Map<List<GetAllChildDto>>(SearchedChildren);
+                foreach (var child in mappedFilteredChildren)
+                {
+                    var childCategory = await _unitOfWork
+                        .Repository<ChildResult, int>()
+                        .Get(cr => cr.ChildId == child.Id)
+                        .Result.FirstOrDefaultAsync();
+                    if (childCategory is null)
+                    {
+                        child.Category = null;
+                    }
+                    else
+                    {
+                        var category = await _unitOfWork
+                            .Repository<Category, int>()
+                            .GetAsync(childCategory.CategoryId);
+                        if (category is null)
+                        {
+                            genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                            genericResponse.Message = "Invalid Category As Result";
+                            return genericResponse;
+                        }
+                        child.Category = category.Name;
+                    }
+                }
+                genericResponse.StatusCode = StatusCodes.Status200OK;
+                genericResponse.Message = "Successfully To Search on Children";
+                genericResponse.Data = mappedFilteredChildren;
+
+                return genericResponse;
+            }
+
+            var allChildrenOfUser = await _unitOfWork
+                .Repository<Child, int>()
+                .Get(c => c.AthliQUserId == userId && c.IsDeleted != true)
+                .Result.Skip((pageIndex.Value - 1) * pageSize.Value)
+                .Take(pageSize.Value)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToListAsync();
+            if (allChildrenOfUser.Count == 0)
+            {
+                genericResponse.StatusCode = StatusCodes.Status200OK;
+                genericResponse.Message = "There are No Children to show";
+
+                return genericResponse;
+            }
+
+            var mappedChildren = _mapper.Map<List<GetAllChildDto>>(allChildrenOfUser);
+
+            foreach (var child in mappedChildren)
+            {
+                var childCategory = await _unitOfWork
+                    .Repository<ChildResult, int>()
+                    .Get(cr => cr.ChildId == child.Id)
+                    .Result.FirstOrDefaultAsync();
+                if (childCategory is null)
+                {
+                    child.Category = null;
+                }
+                else
+                {
+                    var category = await _unitOfWork
+                        .Repository<Category, int>()
+                        .GetAsync(childCategory.CategoryId);
+                    if (category is null)
+                    {
+                        genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                        genericResponse.Message = "Invalid Category As Result";
+                        return genericResponse;
+                    }
+                    child.Category = category.Name;
+                }
+            }
+
+            genericResponse.StatusCode = StatusCodes.Status200OK;
+            genericResponse.Message = "Success to retreive all children";
+            genericResponse.Data = mappedChildren;
             return genericResponse;
         }
     }

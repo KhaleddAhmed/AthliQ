@@ -6,6 +6,7 @@ using AthliQ.Core.Service.Contract;
 using AthliQ.Repository;
 using AthliQ.Repository.Data.Contexts;
 using AthliQ.Repository.Data.Seed;
+using AthliQ.Service.Services.Cache;
 using AthliQ.Service.Services.Categories;
 using AthliQ.Service.Services.Children;
 using AthliQ.Service.Services.Sports;
@@ -15,7 +16,9 @@ using AthliQ.Service.Services.User;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 
 namespace AthliQ.User.API
 {
@@ -41,12 +44,20 @@ namespace AthliQ.User.API
             builder.Services.AddScoped<ITestService, TestService>();
             builder.Services.AddScoped<ISportService, SportService>();
             builder.Services.AddScoped<IChildService, ChildService>();
+            builder.Services.AddScoped<ICacheService, CacheService>();
 
             builder.Services.AddDbContext<AthliQDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("AthliQConnection"));
             });
+            builder.Services.AddSingleton<IConnectionMultiplexer>(
+                (serviceProvider) =>
+                {
+                    var connection = builder.Configuration.GetConnectionString("Redis");
 
+                    return ConnectionMultiplexer.Connect(connection);
+                }
+            );
             builder
                 .Services.AddIdentity<AthliQUser, IdentityRole>()
                 .AddEntityFrameworkStores<AthliQDbContext>();
