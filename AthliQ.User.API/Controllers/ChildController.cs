@@ -31,7 +31,7 @@ namespace AthliQ.User.API.Controllers
         [Cache(1)]
         public async Task<ActionResult> ViewAll(
             string? search,
-            int? pageSize = 5,
+            int? pageSize = 6,
             int? pageIndex = 1
         )
         {
