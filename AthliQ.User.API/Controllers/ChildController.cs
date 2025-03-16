@@ -53,5 +53,22 @@ namespace AthliQ.User.API.Controllers
             var result = await _childService.DeleteChildAsync(childId, userId);
             return Ok(result);
         }
+
+        //[HttpPost("EvaluteChildResult")]
+        //[Authorize(Roles = "User")]
+        //public async Task<ActionResult> Evaluate(int childId)
+        //{
+        //    var result = await _childService.EvaluateDataAsync(childId);
+        //    return Ok(result);
+        //}
+
+
+        [HttpPost("EvaluteChildResult")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult> Evaluate(ChildToSendDto childToSendDto)
+        {
+            var result = await _childService.EvaluateDataTestAsync(childToSendDto);
+            return Ok(result);
+        }
     }
 }
