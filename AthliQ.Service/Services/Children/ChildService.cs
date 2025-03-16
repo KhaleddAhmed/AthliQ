@@ -168,6 +168,43 @@ namespace AthliQ.Service.Services.Children
             return genericResponse;
         }
 
+        public async Task<GenericResponse<bool>> DeleteChildAsync(int childId, string userId)
+        {
+            var genericResponse = new GenericResponse<bool>();
+            var child = await _unitOfWork
+                .Repository<Child, int>()
+                .Get(c => c.Id == childId && c.AthliQUserId == userId)
+                .Result.FirstOrDefaultAsync();
+            if (child is null)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Invalid Child Id to delete";
+
+                genericResponse.Data = false;
+
+                return genericResponse;
+            }
+
+            child.IsDeleted = true;
+            _unitOfWork.Repository<Child, int>().Update(child);
+            var result = await _unitOfWork.CompleteAsync();
+
+            if (result > 0)
+            {
+                genericResponse.StatusCode = StatusCodes.Status200OK;
+                genericResponse.Message = "Child Deleted Succesfully";
+                genericResponse.Data = true;
+
+                return genericResponse;
+            }
+
+            genericResponse.StatusCode = StatusCodes.Status200OK;
+            genericResponse.Message = "Failed to Delete Child";
+            genericResponse.Data = false;
+
+            return genericResponse;
+        }
+
         public async Task<GenericResponse<List<GetAllChildDto>>> ViewAllChildrenAsync(
             string userId,
             string? search,
