@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AthliQ.Core;
 using AthliQ.Core.DTOs.Child;
@@ -19,11 +20,13 @@ namespace AthliQ.Service.Services.Children
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly HttpClient _httpClient;
 
-        public ChildService(IUnitOfWork unitOfWork, IMapper mapper)
+        public ChildService(IUnitOfWork unitOfWork, IMapper mapper, HttpClient httpClient)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _httpClient = httpClient;
         }
 
         public async Task<GenericResponse<bool>> CreateChildAsync(
@@ -205,6 +208,78 @@ namespace AthliQ.Service.Services.Children
             return genericResponse;
         }
 
+        public async Task<GenericResponse<List<ChildResultIntegratedDto>>> EvaluateDataAsync(
+            int childId
+        )
+        {
+            var genericResponse = new GenericResponse<List<ChildResultIntegratedDto>>();
+            var child = await _unitOfWork
+                .Repository<Child, int>()
+                .Get(c => c.Id == childId && c.IsDeleted != true)
+                .Result.Include(c => c.ChildTests)
+                .FirstOrDefaultAsync();
+
+            if (child is null)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Cannot Evalute Child Data because it is not exist";
+
+                return genericResponse;
+            }
+
+            var preferedSports = await _unitOfWork
+                .Repository<Sport, int>()
+                .Get(s => s.Id == child.SportPreferenceId)
+                .Result.Include(s => s.Category)
+                .FirstOrDefaultAsync();
+
+            var listOfPerferedCategory = new List<string>() { preferedSports.Category.Name };
+
+            var parentSportsHistory = await _unitOfWork
+                .Repository<Sport, int>()
+                .Get(s => s.Id == child.ParentSportHistoryId)
+                .Result.Include(s => s.Category)
+                .FirstOrDefaultAsync();
+
+            var listOfParentCategory = new List<string> { parentSportsHistory.Category.Name };
+
+            var listOfScores = child.ChildTests.Select(ct => ct.TestResult).ToList();
+
+            var ChildTosendDto = new ChildToSendDto()
+            {
+                Name = child.Name,
+                Gender = child.Gender,
+                BirthDate = child.DateOfBirth,
+                Height = child.Hieght,
+                Weight = child.Weight,
+                HasDoctorApproval = child.IsAgreeDoctorApproval,
+                HasNormalBloodTest = child.IsNormalBloodTest,
+                SchoolType = child.SchoolName,
+                PreferredSports = listOfPerferedCategory,
+                ParentSportsHistory = listOfParentCategory,
+                TestScores = listOfScores,
+            };
+
+            var ChildResult = await SendPlayerDataAsync(ChildTosendDto);
+
+            genericResponse.StatusCode = StatusCodes.Status200OK;
+            genericResponse.Message = "Retreived Result";
+            return genericResponse;
+        }
+
+        public async Task<GenericResponse<List<ChildResultIntegratedDto>>> EvaluateDataTestAsync(
+            ChildToSendDto childToSendDto
+        )
+        {
+            var genericResponse = new GenericResponse<List<ChildResultIntegratedDto>>();
+
+            var ChildResult = await SendPlayerDataAsync(childToSendDto);
+
+            genericResponse.StatusCode = StatusCodes.Status200OK;
+            genericResponse.Message = "Retreived Result";
+            return genericResponse;
+        }
+
         public async Task<GenericResponse<List<GetAllChildDto>>> ViewAllChildrenAsync(
             string userId,
             string? search,
@@ -311,6 +386,27 @@ namespace AthliQ.Service.Services.Children
             genericResponse.Message = "Success to retreive all children";
             genericResponse.Data = mappedChildren;
             return genericResponse;
+        }
+
+        private async Task<string> SendPlayerDataAsync(object playerData)
+        {
+            var json = JsonSerializer.Serialize(playerData);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            try
+            {
+                var response = await _httpClient.PostAsync(
+                    "http://localhost:9091/player/categorize",
+                    content
+                );
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content.ReadAsStringAsync();
+            }
+            catch (Exception ex)
+            {
+                return $" Error sending data to Drools API: {ex.Message}";
+            }
         }
     }
 }
