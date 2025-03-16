@@ -17,5 +17,7 @@ namespace AthliQ.Core.Service.Contract
             int? pageSize = 5,
             int? pageIndex = 1
         );
+
+        Task<GenericResponse<bool>> DeleteChildAsync(int childId, string userId);
     }
 }

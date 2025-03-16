@@ -44,5 +44,14 @@ namespace AthliQ.User.API.Controllers
             );
             return Ok(result);
         }
+
+        [HttpDelete("DeleteChild")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult> Delete(int childId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _childService.DeleteChildAsync(childId, userId);
+            return Ok(result);
+        }
     }
 }
