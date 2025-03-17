@@ -54,21 +54,21 @@ namespace AthliQ.User.API.Controllers
             return Ok(result);
         }
 
-        //[HttpPost("EvaluteChildResult")]
-        //[Authorize(Roles = "User")]
-        //public async Task<ActionResult> Evaluate(int childId)
-        //{
-        //    var result = await _childService.EvaluateDataAsync(childId);
-        //    return Ok(result);
-        //}
-
-
         [HttpPost("EvaluteChildResult")]
         [Authorize(Roles = "User")]
-        public async Task<ActionResult> Evaluate(ChildToSendDto childToSendDto)
+        public async Task<ActionResult> Evaluate(int childId)
         {
-            var result = await _childService.EvaluateDataTestAsync(childToSendDto);
+            var result = await _childService.EvaluateDataAsync(childId);
             return Ok(result);
         }
+        #region Old One
+
+        //[HttpPost("EvaluteChildResult")]
+        //public async Task<ActionResult> Evaluate([FromBody]ChildToSendDto Player)
+        //{
+        //    var result = await _childService.Eva(Player);
+        //    return Ok(result);
+        //}
+        #endregion
     }
 }
