@@ -113,6 +113,10 @@ namespace AthliQ.User.API
                 await _dbContext.Database.MigrateAsync();
                 await RoleDbContextSeed.SeedRoleAsync(roleManager);
                 await AdminDbContextSeed.SeedAdminAsync(userManager);
+                
+                await CategoryDbContextSeed.SeedCategoryAsync(_dbContext);
+                await SportDbContextSeed.SeedSportAsync(_dbContext);
+                await TestDbContextSeed.SeedTestAsync(_dbContext);
             }
             catch (Exception ex)
             {

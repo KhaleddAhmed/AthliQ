@@ -1,0 +1,50 @@
+﻿[
+  {
+    "Name": "Standing Long Jump Test (in cm)",
+    "ArabicName": "الوثب الطويل من الثبات (سم)",
+    "Description": "The individual stands behind a marked starting line with feet shoulder-width apart. From a stationary position, they bend their knees, swing their arms, and jump forward as far as possible, landing on both feet. The distance is measured in centimeters (cm) from the starting line to the nearest point of contact on landing, usually the heels. The best of multiple attempts is recorded as the final score.",
+    "CategoryId": 100
+  },
+  {
+    "Name": "Sit-and-Reach Flexibility (in cm)",
+    "ArabicName": "(سم) مرونة الجذع من الجلوس الطويل",
+    "Description": "The individual sits on the floor with legs fully extended and feet flat against a measurement box or ruler. Keeping the knees straight, they slowly reach forward with both hands as far as possible without bouncing. The distance reached is measured in centimeters (cm) from the baseline of the measurement device. The best of multiple attempts is recorded as the final score.",
+    "CategoryId": 200
+  },
+  {
+    "Name": "One-Leg Stand (30 seconds)",
+    "ArabicName": "الوقوف على قدم واحدة لمدة 30 ثانية بالدرجة",
+    "Description": "The individual stands upright with feet together and hands on the hips. When instructed, they lift one foot off the ground and balance on the other leg for up to 30 seconds without hopping or touching the raised foot to the standing leg. The time is recorded in seconds until the person loses balance or completes the full duration. The best of multiple attempts is recorded as the final score.",
+    "CategoryId": 300
+  },
+  {
+    "Name": "Sit-up Test (30 seconds)",
+    "ArabicName": "الجلوس من الرقود 30 ثانية بالعدد",
+    "Description": "The individual lies on their back with knees bent at approximately 90 degrees and feet flat on the ground. Hands are placed on the chest or behind the head. A partner or equipment may be used to hold the feet in place. When the timer starts, the individual performs as many sit-ups as possible within 30 seconds, ensuring that the elbows touch the knees or thighs and the shoulders return to the ground for each repetition. The total number of correct sit-ups is recorded as the score.",
+    "CategoryId": 200
+  },
+  {
+    "Name": "Medicine Ball Push (1 kg) from Standing Position",
+    "ArabicName": "دفع كرة طبية وزن 1 كجم من الثبات",
+    "Description": "The individual stands behind a marked starting line with feet shoulder-width apart, holding a 1 kg medicine ball at chest level with both hands. Using an explosive pushing motion, they extend their arms forward to propel the ball as far as possible without stepping over the line. The distance is measured in centimeters (cm) from the starting line to the nearest point where the ball lands. The best of multiple attempts is recorded as the final score.",
+    "CategoryId": 100
+  },
+  {
+    "Name": "Straight-Line Walking (3 meters)",
+    "ArabicName": "المشي على  خط مستقيم 3 امتار",
+    "Description": "The individual stands at the starting point of a marked 3-meter straight line. When instructed, they walk forward along the line, placing one foot directly in front of the other (heel-to-toe) while maintaining balance. The test is completed when the individual reaches the end of the line without stepping off. The time taken and any loss of balance are recorded. The best of multiple attempts is used as the final score.",
+    "CategoryId": 300
+  },
+  {
+    "Name": "30-Meter Sprint (in seconds)",
+    "ArabicName": "عدو 30 متر بالثانية",
+    "Description": "The individual starts in a ready position behind the starting line. When given the signal, they sprint as fast as possible for 30 meters. A timer records the time taken in seconds from the starting signal to crossing the finish line. The best time from multiple attempts is recorded as the final score.",
+    "CategoryId": 400
+  },
+  {
+    "Name": "15-Meter Zigzag Run (in seconds)",
+    "ArabicName": "الجري الزجزاجي 15 متر بالثانية",
+    "Description": "The individual starts in a ready position behind the starting line. When signaled, they sprint through a marked zigzag course, weaving around cones or markers placed along the 15-meter path. The time taken to complete the course is recorded in seconds. The best time from multiple attempts is considered the final score.",
+    "CategoryId": 400
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "Name": "Muscular Strength",
+    "ArabicName": "القوة العضلية",
+    "Description": "Muscular strength is the ability of a muscle or a group of muscles to exert maximum force against resistance in a single effort. It is a key component of physical fitness that contributes to movement efficiency, stability, and overall athletic performance. Muscular strength enables individuals to perform tasks that require power, lifting, pushing, or pulling while supporting joint health and injury prevention. It can be developed through resistance training, weightlifting, and bodyweight exercises."
+  },
+  {
+    "Name": "Muscular Endurance",
+    "ArabicName": "التحمل العضلي",
+    "Description": "Muscular endurance refers to the ability of a muscle or group of muscles to sustain repeated contractions or maintain force over an extended period without fatigue. It is essential in sports that require prolonged physical exertion.Athletes with high muscular endurance can perform activities with sustained effort, delaying muscle fatigue and enhancing overall performance."
+  },
+  {
+    "Name": "Balance",
+    "ArabicName": "التوازن",
+    "Description": "Balance refers to the ability to maintain body stability and control either in a stationary position (static balance) or while in motion (dynamic balance). It is a fundamental skill in various sports , where precise body coordination and stability are required. Good balance enhances movement efficiency, prevents falls, and improves overall athletic performance."
+  },
+  {
+    "Name": "Speed and Agility",
+    "ArabicName": "السرعة والرشاقة:",
+    "Description": "Speed and agility refer to the ability to move rapidly and change direction efficiently while maintaining control and balance. Speed is the capacity to cover a distance in the shortest time possible, while agility involves quick changes in movement direction with precision and coordination. These attributes are essential in some sports , where rapid acceleration, sudden stops, and directional shifts are crucial for performance."
+  }
+]
