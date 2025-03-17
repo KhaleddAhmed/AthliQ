@@ -1,5 +1,6 @@
 ﻿using AthliQ.Core.DTOs.Sport;
 using AthliQ.Core.Service.Contract;
+using AthliQ.User.API.Attrbiutes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

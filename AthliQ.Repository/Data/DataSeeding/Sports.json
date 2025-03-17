@@ -1,0 +1,92 @@
+[
+  {
+    "Name": "Football",
+    "ArabicName": "كرة القدم",
+    "Description": "Football, also known as soccer, is one of the most popular sports worldwide, played by two teams of 11 players each. The objective of the game is to score goals by kicking the ball into the opposing team's net while following the rules set by the governing bodies. The game is played on a rectangular field with a goal at each end, and players use their feet, head, or other body parts (except hands and arms) to control and pass the ball. Goalkeepers are the only players allowed to use their hands within the penalty area. Football requires a combination of speed, agility, endurance, teamwork, and strategic thinking.Major competitions include the FIFA World Cup, UEFA Champions League, and domestic leagues such as the English Premier League and La Liga.",
+    "CategoryId": 100
+  },
+  {
+    "Name": "Basketball",
+    "ArabicName": "كرة السلة",
+    "Description": "Basketball is a fast-paced team sport played between two teams of five players each. The objective is to score points by shooting the ball through the opposing team's hoop, which is mounted 10 feet (3.05 meters) high on a backboard. Players move the ball by dribbling or passing while following the game's rules, which include shot clocks, fouls, and out-of-bounds regulations. The team with the most points at the end of the game wins. Basketball requires speed, agility, endurance, teamwork, and precise shooting skills. It is played both indoors and outdoors, with professional leagues such as the NBA (National Basketball Association) and international tournaments like the FIBA Basketball World Cup and the Olympic Games being the most prestigious competitions.",
+    "CategoryId": 100
+  },
+  {
+    "Name": "Weightlifting",
+    "ArabicName": "رفع الأثقال",
+    "Description": "Weightlifting is a strength-based sport that involves lifting heavy weights in a controlled manner to test and develop muscular power. It is an Olympic sport consisting of two main lifts: the snatch, where the athlete lifts the barbell from the ground to overhead in one motion, and the clean and jerk, where the barbell is lifted to the shoulders first before being pushed overhead. Weightlifting requires a combination of strength, speed, technique, balance, and flexibility. Athletes compete in different weight categories, and the winner is determined by the highest combined total of both lifts. The sport is widely practiced for competitive purposes, fitness training, and strength development. Major competitions include the Olympic Games, World Weightlifting Championships, and regional championships.",
+    "CategoryId": 100
+  },
+  {
+    "Name": "Karate",
+    "ArabicName": "الكاراتيه",
+    "Description": "Karate is a traditional Japanese martial art that focuses on striking techniques using punches, kicks, knee strikes, and open-hand techniques. It emphasizes discipline, self-defense, and physical fitness while also incorporating defensive blocking movements against attacks. Karate practitioners, known as karatekas, train in katas (pre-arranged forms) and kumite (sparring) to develop their skills. The sport is practiced worldwide for self-defense, personal development, and competitive purposes. Karate competitions are divided into kumite (combat) and kata (performance of techniques), and points are awarded based on precision, speed, and effectiveness. It is recognized as an Olympic sport and is governed by the World Karate Federation (WKF).",
+    "CategoryId": 100
+  },
+  {
+    "Name": "Taekwondo",
+    "ArabicName": "التايكوندو",
+    "Description": "Taekwondo is a Korean martial art that emphasizes fast, powerful kicks, spinning techniques, and high agility. It combines self-defense, discipline, and athletic performance, making it one of the most dynamic combat sports. Taekwondo practitioners, known as taekwondoin, train in poomsae (patterns), kyorugi (sparring), and breaking techniques to enhance their skills. Competitive taekwondo matches focus on scoring points through controlled kicks and punches, mainly targeting the torso and head. The sport is governed by the World Taekwondo (WT) organization and has been an official Olympic sport since the 2000 Sydney Games. Taekwondo requires flexibility, speed, precision, and mental discipline, making it both a self-defense system and a competitive sport practiced worldwide.",
+    "CategoryId": 100
+  },
+  {
+    "Name": "Swimming",
+    "ArabicName": "السباحة",
+    "Description": "Swimming is a water-based sport and physical activity that involves propelling the body through water using coordinated arm and leg movements. It is both a recreational and competitive sport, with events ranging from short sprints to long-distance races. Competitive swimming includes different styles such as freestyle, backstroke, breaststroke, and butterfly, each requiring specific techniques and skills. The sport enhances cardiovascular fitness, muscle endurance, and overall flexibility. Swimming competitions are governed by the International Swimming Federation (World Aquatics) and feature in the Olympic Games, World Championships, and regional competitions. It is also a vital survival skill and is widely practiced for fitness, rehabilitation, and leisure.",
+    "CategoryId": 200
+  },
+  {
+    "Name": "Tennis",
+    "ArabicName": "التنس",
+    "Description": "Tennis is a fast-paced racket sport played on a rectangular court, where players use a racket to hit a ball over a net into the opponent’s side. It can be played in singles (one-on-one) or doubles (two-on-two) formats. The game is won by scoring points through rallies, with the goal of making the ball land within the opponent’s court while preventing them from returning it successfully. Tennis requires speed, agility, endurance, and strategic thinking, making it both physically and mentally demanding. Major tournaments include Wimbledon, the US Open, the French Open, and the Australian Open, collectively known as the Grand Slam. The sport is governed by the International Tennis Federation (ITF) and is popular worldwide for both professional competition and recreational play.",
+    "CategoryId": 200
+  },
+  {
+    "Name": "Judo",
+    "ArabicName": "الجودو",
+    "Description": "Judo is a modern Japanese martial art and Olympic sport that focuses on grappling techniques, throws, and ground control rather than striking. It was founded by Jigoro Kano in 1882 and emphasizes using an opponent’s strength and balance against them. Judo matches involve throws (nage-waza), pins, joint locks, and chokeholds (ne-waza) to subdue opponents. The sport promotes discipline, physical fitness, and mental resilience, making it both a self-defense system and a competitive sport. Judo competitions are governed by the International Judo Federation (IJF) and are featured in the Olympic Games, World Championships, and regional tournaments.",
+    "CategoryId": 200
+  },
+  {
+    "Name": "Ballet",
+    "ArabicName": "الباليه",
+    "Description": "Ballet is a highly technical and artistic form of dance that combines grace, strength, flexibility, and precision. Originating in the Italian Renaissance and later refined in France and Russia, ballet is both a performing art and a physically demanding discipline. It involves fluid movements, jumps, spins, and complex footwork, often performed to classical music. Ballet dancers train for years to develop balance, coordination, and endurance. It is performed in classical, contemporary, and neoclassical styles and is a fundamental foundation for many other dance forms. Although primarily an artistic discipline, ballet requires the same level of athleticism as competitive sports.",
+    "CategoryId": 200
+  },
+  {
+    "Name": "Gymnastics",
+    "ArabicName": "الجمباز",
+    "Description": "Gymnastics is a highly dynamic and physically demanding sport that involves strength, flexibility, balance, coordination, and agility. It includes a variety of disciplines such as artistic gymnastics, rhythmic gymnastics, trampoline, and acrobatics. Gymnasts perform routines that incorporate jumps, flips, spins, and balances on apparatuses like the vault, balance beam, uneven bars, parallel bars, rings, and floor exercises. The sport requires years of training to master control, precision, and body awareness. Gymnastics is governed by the International Gymnastics Federation (FIG) and is a major event in the Olympic Games, World Championships, and other international competitions.",
+    "CategoryId": 300
+  },
+  {
+    "Name": "Ice Skating",
+    "ArabicName": "التزلج على الجليد",
+    "Description": "Ice skating is a sport and recreational activity that involves gliding across an ice surface using specially designed bladed skates. It includes various disciplines such as figure skating, speed skating, and ice hockey, each requiring different skills and techniques. Ice skating demands balance, agility, strength, and coordination, with athletes performing intricate movements, spins, jumps, and fast-paced maneuvers. The sport is popular worldwide, especially in colder regions, and is featured in the Winter Olympic Games. Competitive ice skating is governed by organizations such as the International Skating Union (ISU).",
+    "CategoryId": 300
+  },
+  {
+    "Name": "Handball",
+    "ArabicName": "كرة اليد",
+    "Description": "Handball is a fast-paced team sport played between two teams of seven players each, including a goalkeeper. The objective is to score goals by throwing a ball into the opponent's net using hand passes, dribbles, and quick movements. The game is played on a 40x20 meter court with a goal at each end. It requires speed, agility, teamwork, and strategic play. Handball is a popular international sport and is governed by the International Handball Federation (IHF). It is featured in the Olympic Games, World Championships, and regional tournaments.",
+    "CategoryId": 400
+  },
+  {
+    "Name": "Squash",
+    "ArabicName": "الإسكواش",
+    "Description": "Squash is a high-intensity racket sport played by two (singles) or four (doubles) players in an enclosed court. The game involves hitting a small rubber ball against a front wall, aiming to make it difficult for the opponent to return the shot. Players must demonstrate speed, agility, endurance, and strategic thinking to control the pace and positioning of the game. Squash is played in a fast-paced manner, requiring quick reflexes and excellent hand-eye coordination. It is governed by the Professional Squash Association (PSA) and is played in international tournaments, including the World Squash Championships and the Commonwealth Games.",
+    "CategoryId": 400
+  },
+  {
+    "Name": "Volleyball",
+    "ArabicName": "كرة الطائرة",
+    "Description": "Volleyball is a fast-paced team sport played between two teams of six players each. The objective is to hit the ball over the net and land it in the opponent’s court while preventing them from doing the same. Players use passing, setting, spiking, and blocking techniques to score points. The game requires speed, agility, teamwork, and coordination. Volleyball is played both indoors and on the beach (beach volleyball) and is governed by the Fédération Internationale de Volleyball (FIVB). It is a major sport in the Olympic Games, World Championships, and international leagues.",
+    "CategoryId": 400
+  },
+  {
+    "Name": "Athletics",
+    "ArabicName": "ألعاب القوى",
+    "Description": "Athletics is a collection of competitive sports that include running, jumping, throwing, and walking events. It is one of the oldest and most fundamental forms of sport, emphasizing speed, endurance, strength, and skill. Key disciplines in athletics include sprint races, long-distance running, hurdles, high jump, long jump, shot put, javelin throw, and race walking. Athletics is governed by World Athletics and is a core sport in the Olympic Games, World Championships, and regional competitions. It is widely practiced at professional, amateur, and school levels worldwide.",
+    "CategoryId": 400
+  }
+]
