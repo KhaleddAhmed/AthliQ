@@ -243,7 +243,10 @@ namespace AthliQ.Service.Services.Children
 
             var listOfParentCategory = new List<string> { parentSportsHistory.Category.Name };
 
-            var listOfScores = child.ChildTests.Select(ct => ct.TestResult).ToList();
+            var listOfScores = child
+                .ChildTests.OrderBy(ct => ct.TestId)
+                .Select(ct => ct.TestResult)
+                .ToList();
 
             var ChildTosendDto = new ChildToSendDto()
             {
@@ -261,24 +264,61 @@ namespace AthliQ.Service.Services.Children
             };
 
             var ChildResult = await SendPlayerDataAsync(ChildTosendDto);
+            if (ChildResult != null)
+            {
+                var result = JsonSerializer.Deserialize<List<ChildResultIntegratedDto>>(
+                    ChildResult
+                );
+
+                var ResultCategoryOfTheChild = result.OrderByDescending(c => c.Score).ElementAt(0);
+                var childResultCategory = new ChildResult()
+                {
+                    ChildId = child.Id,
+                    CategoryId = await _unitOfWork
+                        .Repository<Category, int>()
+                        .Get(c => c.Name == ResultCategoryOfTheChild.Category)
+                        .Result.Select(c => c.Id)
+                        .FirstOrDefaultAsync(),
+                    ResultDate = DateTime.Now,
+                };
+
+                await _unitOfWork.Repository<ChildResult, int>().AddAsync(childResultCategory);
+                var resultOfCreationChildResult = await _unitOfWork.CompleteAsync();
+                if (resultOfCreationChildResult > 0)
+                {
+                    genericResponse.StatusCode = StatusCodes.Status200OK;
+                    genericResponse.Message = "Retreived Result succesfully";
+                    genericResponse.Data = result;
+                    return genericResponse;
+                }
+
+                genericResponse.StatusCode = StatusCodes.Status200OK;
+                genericResponse.Message = "Failed to Add Result Of Child";
+
+                return genericResponse;
+            }
 
             genericResponse.StatusCode = StatusCodes.Status200OK;
-            genericResponse.Message = "Retreived Result";
+            genericResponse.Message = "Failed to retreive Result Of Child";
+
             return genericResponse;
         }
 
-        public async Task<GenericResponse<List<ChildResultIntegratedDto>>> EvaluateDataTestAsync(
-            ChildToSendDto childToSendDto
-        )
-        {
-            var genericResponse = new GenericResponse<List<ChildResultIntegratedDto>>();
+        #region Test
+        //public async Task<GenericResponse<List<ChildResultIntegratedDto>>> EvaluateDataTestAsync(
+        //    ChildToSendDto player
+        //)
+        //{
+        //    var genericResponse = new GenericResponse<List<ChildResultIntegratedDto>>();
 
-            var ChildResult = await SendPlayerDataAsync(childToSendDto);
+        //    var ChildResult = await SendPlayerDataAsync(player);
 
-            genericResponse.StatusCode = StatusCodes.Status200OK;
-            genericResponse.Message = "Retreived Result";
-            return genericResponse;
-        }
+        //    genericResponse.StatusCode = StatusCodes.Status200OK;
+        //    genericResponse.Message = "Retreived Result";
+        //    return genericResponse;
+        //}
+        #endregion
+
 
         public async Task<GenericResponse<List<GetAllChildDto>>> ViewAllChildrenAsync(
             string userId,
@@ -388,9 +428,13 @@ namespace AthliQ.Service.Services.Children
             return genericResponse;
         }
 
-        private async Task<string> SendPlayerDataAsync(object playerData)
+        private async Task<string> SendPlayerDataAsync(object player)
         {
-            var json = JsonSerializer.Serialize(playerData);
+            var jsonOptionsPolicy = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
+            var json = JsonSerializer.Serialize(player, jsonOptionsPolicy);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             try

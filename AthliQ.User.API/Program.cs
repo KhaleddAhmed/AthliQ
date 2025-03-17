@@ -45,6 +45,7 @@ namespace AthliQ.User.API
             builder.Services.AddScoped<ISportService, SportService>();
             builder.Services.AddScoped<IChildService, ChildService>();
             builder.Services.AddScoped<ICacheService, CacheService>();
+            builder.Services.AddHttpClient<IChildService, ChildService>();
 
             builder.Services.AddDbContext<AthliQDbContext>(options =>
             {

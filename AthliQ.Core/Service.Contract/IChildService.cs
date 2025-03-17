@@ -21,8 +21,8 @@ namespace AthliQ.Core.Service.Contract
         Task<GenericResponse<bool>> DeleteChildAsync(int childId, string userId);
 
         Task<GenericResponse<List<ChildResultIntegratedDto>>> EvaluateDataAsync(int childId);
-        Task<GenericResponse<List<ChildResultIntegratedDto>>> EvaluateDataTestAsync(
-            ChildToSendDto childToSendDto
-        );
+        //Task<GenericResponse<List<ChildResultIntegratedDto>>> EvaluateDataTestAsync(
+        //    ChildToSendDto childToSendDto
+        //);
     }
 }
