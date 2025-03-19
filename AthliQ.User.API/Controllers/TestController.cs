@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AthliQ.User.API.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    
     public class TestController : BaseApiController
     {
         private readonly ITestService _testService;
@@ -15,14 +15,14 @@ namespace AthliQ.User.API.Controllers
         {
             _testService = testService;
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost("CreateTest")]
         public async Task<ActionResult> Create([FromBody] CreateTestDto createTestDto)
         {
             var result = await _testService.CreateTestAsync(createTestDto);
             return Ok(result);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPut("UpdateTest")]
         public async Task<ActionResult> Update(UpdateTestDto updateTestDto)
         {
@@ -43,7 +43,7 @@ namespace AthliQ.User.API.Controllers
             var result = await _testService.GetTestAsync(id);
             return Ok(result);
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpDelete("DeleteTest")]
         public async Task<ActionResult> Delete(int id)
         {
