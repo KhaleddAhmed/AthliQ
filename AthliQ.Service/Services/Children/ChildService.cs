@@ -208,11 +208,9 @@ namespace AthliQ.Service.Services.Children
             return genericResponse;
         }
 
-        public async Task<GenericResponse<List<ChildResultIntegratedDto>>> EvaluateDataAsync(
-            int childId
-        )
+        public async Task<GenericResponse<ReturnedEvaluateChildDto>> EvaluateDataAsync(int childId)
         {
-            var genericResponse = new GenericResponse<List<ChildResultIntegratedDto>>();
+            var genericResponse = new GenericResponse<ReturnedEvaluateChildDto>();
             var child = await _unitOfWork
                 .Repository<Child, int>()
                 .Get(c => c.Id == childId && c.IsDeleted != true)
@@ -266,9 +264,22 @@ namespace AthliQ.Service.Services.Children
             var ChildResult = await SendPlayerDataAsync(ChildTosendDto);
             if (ChildResult != null)
             {
-                var result = JsonSerializer.Deserialize<List<ChildResultIntegratedDto>>(
-                    ChildResult
+                var jsonPolicy = new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                };
+                var integrationResult = JsonSerializer.Deserialize<AllDataChildJavaDto>(
+                    ChildResult,
+                    jsonPolicy
                 );
+
+                var result = integrationResult
+                    .CategoryScores.Select(kvp => new ChildResultIntegratedDto
+                    {
+                        Category = kvp.Key,
+                        Score = kvp.Value,
+                    })
+                    .ToList();
 
                 var ResultCategoryOfTheChild = result.OrderByDescending(c => c.Score).ElementAt(0);
                 var childResultCategory = new ChildResult()
@@ -286,9 +297,15 @@ namespace AthliQ.Service.Services.Children
                 var resultOfCreationChildResult = await _unitOfWork.CompleteAsync();
                 if (resultOfCreationChildResult > 0)
                 {
+                    var returnedEvaluatedData = new ReturnedEvaluateChildDto
+                    {
+                        ChildResultIntegratedDto = result,
+                        FinalResult =
+                            $"{child.Name}'s Best Category is {integrationResult.BestCategory}",
+                    };
                     genericResponse.StatusCode = StatusCodes.Status200OK;
                     genericResponse.Message = "Retreived Result succesfully";
-                    genericResponse.Data = result;
+                    genericResponse.Data = returnedEvaluatedData;
                     return genericResponse;
                 }
 

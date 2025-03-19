@@ -40,7 +40,7 @@ namespace AthliQ.Core.DTOs.Child
         public int SportPreferenceId { get; set; }
 
         [Required(ErrorMessage = "Height is Required")]
-        public double Height { get; set; }
+        public double Hieght { get; set; }
 
         [Required(ErrorMessage = "Weight is Required")]
         public double Weight { get; set; }
