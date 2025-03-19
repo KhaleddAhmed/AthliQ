@@ -18,7 +18,7 @@ namespace AthliQ.User.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPost("CreateSport")]
-        public async Task<IActionResult> Create([FromBody]CreateSportDto createSportDto)
+        public async Task<IActionResult> Create([FromBody] CreateSportDto createSportDto)
         {
             var sport = await _sportService.CreateSportAsync(createSportDto);
             return Ok(sport);
@@ -32,7 +32,6 @@ namespace AthliQ.User.API.Controllers
             return Ok(sport);
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet("GetAllSports")]
         public async Task<IActionResult> GetAll(int? categoryId)
         {
@@ -55,6 +54,5 @@ namespace AthliQ.User.API.Controllers
             var sport = await _sportService.DeleteSportAsync(id);
             return Ok(sport);
         }
-
     }
 }
