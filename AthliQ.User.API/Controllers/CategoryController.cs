@@ -23,7 +23,6 @@ namespace AthliQ.User.API.Controllers
             return Ok(result);
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet("GetCategory")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -31,7 +30,6 @@ namespace AthliQ.User.API.Controllers
             return Ok(category);
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet("GetCategoryWithSports")]
         public async Task<IActionResult> GetByIdWithSports(int id)
         {
@@ -39,7 +37,6 @@ namespace AthliQ.User.API.Controllers
             return Ok(category);
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet("GetAllCategories")]
         public async Task<IActionResult> GetAll()
         {
