@@ -521,7 +521,12 @@ namespace AthliQ.Service.Services.Children
 				.Take(pageSize.Value)
 				.OrderByDescending(c => c.CreatedAt)
 				.ToListAsync();
-			if (allChildrenOfUser.Count == 0)
+
+			var allChildrenOfUserCount = await _unitOfWork.Repository<Child , int>()
+				                                     .Get(c=>c.AthliQUserId == userId && c.IsDeleted == false)
+													 .Result.ToListAsync();
+
+			if (allChildrenOfUserCount.Count == 0)
 			{
 				genericResponse.StatusCode = StatusCodes.Status200OK;
 				genericResponse.Message = "There are No Children to show";
@@ -529,7 +534,7 @@ namespace AthliQ.Service.Services.Children
 				return genericResponse;
 			}
 
-			totalCount = allChildrenOfUser.Count;
+			totalCount = allChildrenOfUserCount.Count;
 
 			var mappedChildren = _mapper.Map<List<GetAllChildDto>>(allChildrenOfUser);
 
