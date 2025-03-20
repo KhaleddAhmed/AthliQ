@@ -62,6 +62,7 @@ namespace AthliQ.Core.Mapping
                 );
             CreateMap<Sport, GetAllSportsDto>();
             CreateMap<UpdateSportDto, Sport>();
+            CreateMap<Sport, ResultedSportDto>();
         }
 
         private void MapChild()

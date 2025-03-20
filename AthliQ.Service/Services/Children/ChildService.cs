@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using AthliQ.Core;
 using AthliQ.Core.DTOs.Child;
+using AthliQ.Core.DTOs.Sport;
 using AthliQ.Core.Entities.Models;
 using AthliQ.Core.Responses;
 using AthliQ.Core.Service.Contract;
@@ -297,11 +298,16 @@ namespace AthliQ.Service.Services.Children
                 var resultOfCreationChildResult = await _unitOfWork.CompleteAsync();
                 if (resultOfCreationChildResult > 0)
                 {
+                    var sports = await _unitOfWork
+                        .Repository<Sport, int>()
+                        .Get(s => s.CategoryId == childResultCategory.CategoryId)
+                        .Result.ToListAsync();
                     var returnedEvaluatedData = new ReturnedEvaluateChildDto
                     {
                         ChildResultIntegratedDto = result,
                         FinalResult =
                             $"{child.Name}'s Best Category is {integrationResult.BestCategory}",
+                        MatchedSports = _mapper.Map<List<ResultedSportDto>>(sports),
                     };
                     genericResponse.StatusCode = StatusCodes.Status200OK;
                     genericResponse.Message = "Retreived Result succesfully";

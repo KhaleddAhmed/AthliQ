@@ -24,7 +24,6 @@ namespace AthliQ.User.API.Controllers
             return Ok(sport);
         }
 
-        [Authorize(Roles = "Admin")]
         [HttpGet("GetSport")]
         public async Task<IActionResult> GetById(int id)
         {
