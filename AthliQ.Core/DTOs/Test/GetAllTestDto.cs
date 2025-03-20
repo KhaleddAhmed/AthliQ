@@ -11,5 +11,7 @@ namespace AthliQ.Core.DTOs.Test
         public int Id { get; set; }
         public string Name { get; set; }
         public string ArabicName { get; set; }
+
+        public string Description { get; set; }
     }
 }
