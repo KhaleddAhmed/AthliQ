@@ -42,8 +42,14 @@ namespace AthliQ.User.API.Controllers
                 pageSize,
                 pageIndex
             );
-            return Ok(result);
-        }
+			return Ok(new
+			{
+				StatusCode = result.StatusCode,
+				Message = result.Message,
+				TotalCount = result.Data.totalCount,
+				Children = result.Data.getAllChildDtos
+			});
+		}
 
         [HttpDelete("DeleteChild")]
         [Authorize(Roles = "User")]
