@@ -8,6 +8,7 @@ namespace AthliQ.Core.DTOs.Child
 {
     public class AllDataChildJavaDto
     {
+        public Dictionary<string, string> CategoryPercentages { get; set; }
         public Dictionary<string, double> CategoryScores { get; set; }
         public string Name { get; set; }
         public string BestCategory { get; set; }
