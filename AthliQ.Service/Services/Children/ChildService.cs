@@ -216,6 +216,7 @@ namespace AthliQ.Service.Services.Children
                 .Repository<Child, int>()
                 .Get(c => c.Id == childId && c.IsDeleted != true)
                 .Result.Include(c => c.ChildTests)
+                .Include(c => c.ChildResults)
                 .FirstOrDefaultAsync();
 
             if (child is null)
@@ -223,6 +224,13 @@ namespace AthliQ.Service.Services.Children
                 genericResponse.StatusCode = StatusCodes.Status400BadRequest;
                 genericResponse.Message = "Cannot Evalute Child Data because it is not exist";
 
+                return genericResponse;
+            }
+
+            if (child.ChildResults.Any())
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "This Child is already Evaluated";
                 return genericResponse;
             }
 
