@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AthliQ.Core.Entities.Models
 {
-    public class ChildResult : BaseEntity
+    public class ChildResult
     {
         public int ChildId { get; set; }
         public int CategoryId { get; set; }

@@ -28,7 +28,7 @@ namespace AthliQ.Core.Entities.Models
         #endregion
 
         #region Physical aspects
-        public double Hieght { get; set; }
+        public double Height { get; set; }
         public double Weight { get; set; }
         public string ImageFrontURL { get; set; }
         public string ImageSideURL { get; set; }

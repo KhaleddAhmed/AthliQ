@@ -260,7 +260,7 @@ namespace AthliQ.Service.Services.Children
                 Name = child.Name,
                 Gender = child.Gender,
                 BirthDate = child.DateOfBirth,
-                Height = child.Hieght,
+                Height = child.Height,
                 Weight = child.Weight,
                 HasDoctorApproval = child.IsAgreeDoctorApproval,
                 HasNormalBloodTest = child.IsNormalBloodTest,
