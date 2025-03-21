@@ -282,6 +282,14 @@ namespace AthliQ.Service.Services.Children
                     })
                     .ToList();
 
+                var resultWithPercentage = integrationResult
+                    .CategoryPercentages.Select(rp => new ChildResultWithPercentagesDto
+                    {
+                        Category = rp.Key,
+                        Percentage = rp.Value,
+                    })
+                    .ToList();
+
                 var ResultCategoryOfTheChild = result.OrderByDescending(c => c.Score).ElementAt(0);
                 var childResultCategory = new ChildResult()
                 {
@@ -307,6 +315,7 @@ namespace AthliQ.Service.Services.Children
                         ChildResultIntegratedDto = result,
                         FinalResult =
                             $"{child.Name}'s Best Category is {integrationResult.BestCategory}",
+                        ChildResultWithPercentagesDtos = resultWithPercentage,
                         MatchedSports = _mapper.Map<List<ResultedSportDto>>(sports),
                     };
                     genericResponse.StatusCode = StatusCodes.Status200OK;
