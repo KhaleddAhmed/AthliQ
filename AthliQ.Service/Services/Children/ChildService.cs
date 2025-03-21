@@ -274,6 +274,22 @@ namespace AthliQ.Service.Services.Children
                     jsonPolicy
                 );
 
+                if (integrationResult is null)
+                {
+                    genericResponse.StatusCode = StatusCodes.Status200OK;
+                    genericResponse.Message = "Error in integrating with AI Evaluator";
+
+                    return genericResponse;
+                }
+
+                if (integrationResult.Errors is not null)
+                {
+                    genericResponse.StatusCode = StatusCodes.Status200OK;
+                    genericResponse.Message = $"{integrationResult.Errors.First()}";
+
+                    return genericResponse;
+                }
+
                 var result = integrationResult
                     .CategoryScores.Select(kvp => new ChildResultIntegratedDto
                     {
