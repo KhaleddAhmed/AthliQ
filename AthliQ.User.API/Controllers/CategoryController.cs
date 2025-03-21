@@ -24,21 +24,21 @@ namespace AthliQ.User.API.Controllers
         }
 
         [HttpGet("GetCategory")]
-        public async Task<IActionResult> GetById(int id)
+        public async Task<ActionResult> GetById(int id)
         {
             var category = await _categoryService.GetCategoryAsync(id);
             return Ok(category);
         }
 
         [HttpGet("GetCategoryWithSports")]
-        public async Task<IActionResult> GetByIdWithSports(int id)
+        public async Task<ActionResult> GetByIdWithSports(int id)
         {
             var category = await _categoryService.GetCategoryWithSportsAsync(id);
             return Ok(category);
         }
 
         [HttpGet("GetAllCategories")]
-        public async Task<IActionResult> GetAll()
+        public async Task<ActionResult> GetAll()
         {
             var categories = await _categoryService.GetAllCategoriesAsync();
             return Ok(categories);
@@ -46,7 +46,7 @@ namespace AthliQ.User.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpPut("UpdateCategory")]
-        public async Task<IActionResult> Update(UpdateCategoryDto updateCategoryDto)
+        public async Task<ActionResult> Update(UpdateCategoryDto updateCategoryDto)
         {
             var category = await _categoryService.UpdateCategoryAsync(updateCategoryDto);
             return Ok(category);
@@ -54,7 +54,7 @@ namespace AthliQ.User.API.Controllers
 
         [Authorize(Roles = "Admin")]
         [HttpDelete("DeleteCategory")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             var category = await _categoryService.DeleteCategoryAsync(id);
             return Ok(category);
