@@ -24,5 +24,7 @@ namespace AthliQ.Core.Service.Contract
         //Task<GenericResponse<List<ChildResultIntegratedDto>>> EvaluateDataTestAsync(
         //    ChildToSendDto childToSendDto
         //);
+
+        Task<GenericResponse<GetChildDetailsDto>> ViewChildAsync(int childId);
     }
 }
