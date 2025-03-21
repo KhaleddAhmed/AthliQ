@@ -453,24 +453,25 @@ namespace AthliQ.Service.Services.Children
 		//} 
 		#endregion
 
-		public async Task<GenericResponse<(int totalCount, List<GetAllChildDto> getAllChildDtos)>> ViewAllChildrenAsync(
+		public async Task<GenericResponse<GetAllChildWithTotalCountDto>> ViewAllChildrenAsync(
 			string userId,
 			string? search,
 			int? pageSize = 5,
 			int? pageIndex = 1)
 		{
-			var genericResponse = new GenericResponse<(int totalCount, List<GetAllChildDto>)>();
+			var genericResponse = new GenericResponse<GetAllChildWithTotalCountDto>();
 
-			var totalCount = 0;
-
-			if (search != null)
+			var totalCount = await _unitOfWork.Repository<Child, int>()
+											  .Get(c => c.AthliQUserId == userId && c.IsDeleted != true)
+											  .Result.CountAsync();
+			if (search is not null)
 			{
 				var SearchedChildren = await _unitOfWork
 				.Repository<Child, int>()
 				.Get(c =>
-					      c.AthliQUserId == userId
-					      && c.Name.ToLower().Contains(search.ToLower())
-					      && c.IsDeleted != true)
+						  c.AthliQUserId == userId
+						  && c.Name.ToLower().Contains(search.ToLower())
+						  && c.IsDeleted != true)
 				.Result.ToListAsync();
 
 				if (SearchedChildren.Count == 0)
@@ -481,23 +482,20 @@ namespace AthliQ.Service.Services.Children
 					return genericResponse;
 				}
 
-				totalCount = SearchedChildren.Count;
 
 				var mappedFilteredChildren = _mapper.Map<List<GetAllChildDto>>(SearchedChildren);
+
 				foreach (var child in mappedFilteredChildren)
 				{
 					var childCategory = await _unitOfWork.Repository<ChildResult, int>()
-						                                 .Get(cr => cr.ChildId == child.Id)
-						                                 .Result.FirstOrDefaultAsync();
+														 .Get(cr => cr.ChildId == child.Id)
+														 .Result.FirstOrDefaultAsync();
 					if (childCategory is null)
-					{
 						child.Category = null;
-					}
 					else
 					{
-						var category = await _unitOfWork
-							.Repository<Category, int>()
-							.GetAsync(childCategory.CategoryId);
+						var category = await _unitOfWork.Repository<Category, int>()
+														.GetAsync(childCategory.CategoryId);
 						if (category is null)
 						{
 							genericResponse.StatusCode = StatusCodes.Status400BadRequest;
@@ -506,10 +504,17 @@ namespace AthliQ.Service.Services.Children
 						}
 						child.Category = category.Name;
 					}
+
 				}
+				var returnedSearchedData = new GetAllChildWithTotalCountDto()
+				{
+					TotalCount = totalCount,
+					Children = mappedFilteredChildren
+				};
+
 				genericResponse.StatusCode = StatusCodes.Status200OK;
 				genericResponse.Message = "Successfully To Search on Children";
-				genericResponse.Data = (totalCount, mappedFilteredChildren);
+				genericResponse.Data = returnedSearchedData;
 
 				return genericResponse;
 			}
@@ -522,19 +527,13 @@ namespace AthliQ.Service.Services.Children
 				.OrderByDescending(c => c.CreatedAt)
 				.ToListAsync();
 
-			var allChildrenOfUserCount = await _unitOfWork.Repository<Child , int>()
-				                                     .Get(c=>c.AthliQUserId == userId && c.IsDeleted == false)
-													 .Result.ToListAsync();
-
-			if (allChildrenOfUserCount.Count == 0)
+			if (allChildrenOfUser.Count == 0)
 			{
 				genericResponse.StatusCode = StatusCodes.Status200OK;
 				genericResponse.Message = "There are No Children to show";
 
 				return genericResponse;
 			}
-
-			totalCount = allChildrenOfUserCount.Count;
 
 			var mappedChildren = _mapper.Map<List<GetAllChildDto>>(allChildrenOfUser);
 
@@ -545,9 +544,7 @@ namespace AthliQ.Service.Services.Children
 					.Get(cr => cr.ChildId == child.Id)
 					.Result.FirstOrDefaultAsync();
 				if (childCategory is null)
-				{
 					child.Category = null;
-				}
 				else
 				{
 					var category = await _unitOfWork
@@ -563,9 +560,14 @@ namespace AthliQ.Service.Services.Children
 				}
 			}
 
+			var returnedData = new GetAllChildWithTotalCountDto()
+			{
+				TotalCount = totalCount,
+				Children = mappedChildren
+			};
 			genericResponse.StatusCode = StatusCodes.Status200OK;
 			genericResponse.Message = "Success to retreive all children";
-			genericResponse.Data = (totalCount , mappedChildren);
+			genericResponse.Data = returnedData;
 			return genericResponse;
 		}
 		private async Task<string> SendPlayerDataAsync(object player)
