@@ -12,5 +12,6 @@ namespace AthliQ.Core.DTOs.Child
         public Dictionary<string, double> CategoryScores { get; set; }
         public string Name { get; set; }
         public string BestCategory { get; set; }
+        public List<string> Errors { get; set; }
     }
 }
