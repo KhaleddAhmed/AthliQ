@@ -11,7 +11,7 @@ namespace AthliQ.Core.Service.Contract
     public interface IChildService
     {
         Task<GenericResponse<bool>> CreateChildAsync(string userId, CreateChildDto createChildDto);
-        Task<GenericResponse<List<GetAllChildDto>>> ViewAllChildrenAsync(
+        Task<GenericResponse<GetAllChildWithTotalCountDto>> ViewAllChildrenAsync(
             string userId,
             string? search,
             int? pageSize = 5,

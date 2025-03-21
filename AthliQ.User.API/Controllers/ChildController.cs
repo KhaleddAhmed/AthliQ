@@ -42,8 +42,8 @@ namespace AthliQ.User.API.Controllers
                 pageSize,
                 pageIndex
             );
-            return Ok(result);
-        }
+			return Ok(result);
+		}
 
         [HttpDelete("DeleteChild")]
         [Authorize(Roles = "User")]

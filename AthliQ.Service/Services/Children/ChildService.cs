@@ -352,16 +352,130 @@ namespace AthliQ.Service.Services.Children
         #endregion
 
 
-        public async Task<GenericResponse<List<GetAllChildDto>>> ViewAllChildrenAsync(
+        #region ViewAll Without TotalCount
+        //public async Task<GenericResponse<List<GetAllChildDto>>> ViewAllChildrenAsync(
+        //    string userId,
+        //    string? search,
+        //    int? pageSize = 5,
+        //    int? pageIndex = 1
+        //)
+        //{
+        //    var genericResponse = new GenericResponse<List<GetAllChildDto>>();
+
+        //    if (search != null)
+        //    {
+        //        var SearchedChildren = await _unitOfWork
+        //            .Repository<Child, int>()
+        //            .Get(c =>
+        //                c.AthliQUserId == userId
+        //                && c.Name.ToLower().Contains(search.ToLower())
+        //                && c.IsDeleted != true
+        //            )
+        //            .Result.ToListAsync();
+
+        //        if (SearchedChildren.Count == 0)
+        //        {
+        //            genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+        //            genericResponse.Message = "No Children with this name";
+
+        //            return genericResponse;
+        //        }
+
+        //        var mappedFilteredChildren = _mapper.Map<List<GetAllChildDto>>(SearchedChildren);
+        //        foreach (var child in mappedFilteredChildren)
+        //        {
+        //            var childCategory = await _unitOfWork
+        //                .Repository<ChildResult, int>()
+        //                .Get(cr => cr.ChildId == child.Id)
+        //                .Result.FirstOrDefaultAsync();
+        //            if (childCategory is null)
+        //            {
+        //                child.Category = null;
+        //            }
+        //            else
+        //            {
+        //                var category = await _unitOfWork
+        //                    .Repository<Category, int>()
+        //                    .GetAsync(childCategory.CategoryId);
+        //                if (category is null)
+        //                {
+        //                    genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+        //                    genericResponse.Message = "Invalid Category As Result";
+        //                    return genericResponse;
+        //                }
+        //                child.Category = category.Name;
+        //            }
+        //        }
+        //        genericResponse.StatusCode = StatusCodes.Status200OK;
+        //        genericResponse.Message = "Successfully To Search on Children";
+        //        genericResponse.Data = mappedFilteredChildren;
+
+        //        return genericResponse;
+        //    }
+
+        //    var allChildrenOfUser = await _unitOfWork
+        //        .Repository<Child, int>()
+        //        .Get(c => c.AthliQUserId == userId && c.IsDeleted != true)
+        //        .Result.Skip((pageIndex.Value - 1) * pageSize.Value)
+        //        .Take(pageSize.Value)
+        //        .OrderByDescending(c => c.CreatedAt)
+        //        .ToListAsync();
+        //    if (allChildrenOfUser.Count == 0)
+        //    {
+        //        genericResponse.StatusCode = StatusCodes.Status200OK;
+        //        genericResponse.Message = "There are No Children to show";
+
+        //        return genericResponse;
+        //    }
+
+        //    var mappedChildren = _mapper.Map<List<GetAllChildDto>>(allChildrenOfUser);
+
+        //    foreach (var child in mappedChildren)
+        //    {
+        //        var childCategory = await _unitOfWork
+        //            .Repository<ChildResult, int>()
+        //            .Get(cr => cr.ChildId == child.Id)
+        //            .Result.FirstOrDefaultAsync();
+        //        if (childCategory is null)
+        //        {
+        //            child.Category = null;
+        //        }
+        //        else
+        //        {
+        //            var category = await _unitOfWork
+        //                .Repository<Category, int>()
+        //                .GetAsync(childCategory.CategoryId);
+        //            if (category is null)
+        //            {
+        //                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+        //                genericResponse.Message = "Invalid Category As Result";
+        //                return genericResponse;
+        //            }
+        //            child.Category = category.Name;
+        //        }
+        //    }
+
+        //    genericResponse.StatusCode = StatusCodes.Status200OK;
+        //    genericResponse.Message = "Success to retreive all children";
+        //    genericResponse.Data = mappedChildren;
+        //    return genericResponse;
+        //}
+        #endregion
+
+        public async Task<GenericResponse<GetAllChildWithTotalCountDto>> ViewAllChildrenAsync(
             string userId,
             string? search,
             int? pageSize = 5,
             int? pageIndex = 1
         )
         {
-            var genericResponse = new GenericResponse<List<GetAllChildDto>>();
+            var genericResponse = new GenericResponse<GetAllChildWithTotalCountDto>();
 
-            if (search != null)
+            var totalCount = await _unitOfWork
+                .Repository<Child, int>()
+                .Get(c => c.AthliQUserId == userId && c.IsDeleted != true)
+                .Result.CountAsync();
+            if (search is not null)
             {
                 var SearchedChildren = await _unitOfWork
                     .Repository<Child, int>()
@@ -381,6 +495,7 @@ namespace AthliQ.Service.Services.Children
                 }
 
                 var mappedFilteredChildren = _mapper.Map<List<GetAllChildDto>>(SearchedChildren);
+
                 foreach (var child in mappedFilteredChildren)
                 {
                     var childCategory = await _unitOfWork
@@ -388,9 +503,7 @@ namespace AthliQ.Service.Services.Children
                         .Get(cr => cr.ChildId == child.Id)
                         .Result.FirstOrDefaultAsync();
                     if (childCategory is null)
-                    {
                         child.Category = null;
-                    }
                     else
                     {
                         var category = await _unitOfWork
@@ -405,9 +518,15 @@ namespace AthliQ.Service.Services.Children
                         child.Category = category.Name;
                     }
                 }
+                var returnedSearchedData = new GetAllChildWithTotalCountDto()
+                {
+                    TotalCount = totalCount,
+                    Children = mappedFilteredChildren,
+                };
+
                 genericResponse.StatusCode = StatusCodes.Status200OK;
                 genericResponse.Message = "Successfully To Search on Children";
-                genericResponse.Data = mappedFilteredChildren;
+                genericResponse.Data = returnedSearchedData;
 
                 return genericResponse;
             }
@@ -419,6 +538,7 @@ namespace AthliQ.Service.Services.Children
                 .Take(pageSize.Value)
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
+
             if (allChildrenOfUser.Count == 0)
             {
                 genericResponse.StatusCode = StatusCodes.Status200OK;
@@ -436,9 +556,7 @@ namespace AthliQ.Service.Services.Children
                     .Get(cr => cr.ChildId == child.Id)
                     .Result.FirstOrDefaultAsync();
                 if (childCategory is null)
-                {
                     child.Category = null;
-                }
                 else
                 {
                     var category = await _unitOfWork
@@ -454,9 +572,14 @@ namespace AthliQ.Service.Services.Children
                 }
             }
 
+            var returnedData = new GetAllChildWithTotalCountDto()
+            {
+                TotalCount = totalCount,
+                Children = mappedChildren,
+            };
             genericResponse.StatusCode = StatusCodes.Status200OK;
             genericResponse.Message = "Success to retreive all children";
-            genericResponse.Data = mappedChildren;
+            genericResponse.Data = returnedData;
             return genericResponse;
         }
 
