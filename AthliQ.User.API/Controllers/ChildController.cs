@@ -54,7 +54,7 @@ namespace AthliQ.User.API.Controllers
             return Ok(child);
         }
 
-        [HttpDelete("DeleteChild")]
+        [HttpPut("DeleteChild")]
         [Authorize(Roles = "User")]
         public async Task<ActionResult> Delete(int childId)
         {
