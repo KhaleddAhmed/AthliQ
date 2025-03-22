@@ -6,6 +6,7 @@ using AthliQ.Core.Service.Contract;
 using AthliQ.Repository;
 using AthliQ.Repository.Data.Contexts;
 using AthliQ.Repository.Data.Seed;
+using AthliQ.Service.Services.Admin;
 using AthliQ.Service.Services.Cache;
 using AthliQ.Service.Services.Categories;
 using AthliQ.Service.Services.Children;
@@ -46,6 +47,7 @@ namespace AthliQ.User.API
             builder.Services.AddScoped<IChildService, ChildService>();
             builder.Services.AddScoped<ICacheService, CacheService>();
             builder.Services.AddHttpClient<IChildService, ChildService>();
+            builder.Services.AddScoped<IAdminService , AdminService>();
 
             builder.Services.AddDbContext<AthliQDbContext>(options =>
             {
