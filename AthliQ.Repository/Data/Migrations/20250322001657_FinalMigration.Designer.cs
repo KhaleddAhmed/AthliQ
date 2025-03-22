@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AthliQ.Repository.Data.Migrations
 {
     [DbContext(typeof(AthliQDbContext))]
-    [Migration("20250311004454_BaseEntityAndUserClubModification")]
-    partial class BaseEntityAndUserClubModification
+    [Migration("20250322001657_FinalMigration")]
+    partial class FinalMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -173,7 +173,6 @@ namespace AthliQ.Repository.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("ClubName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
@@ -186,7 +185,7 @@ namespace AthliQ.Repository.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double>("Hieght")
+                    b.Property<double>("Height")
                         .HasColumnType("float");
 
                     b.Property<string>("ImageFrontURL")
@@ -197,10 +196,13 @@ namespace AthliQ.Repository.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsAgreeHealthPolicies")
+                    b.Property<bool>("IsAgreeDoctorApproval")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsNormalBloodTest")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
@@ -245,19 +247,7 @@ namespace AthliQ.Repository.Data.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("ResultDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("ChildId", "CategoryId");
@@ -278,17 +268,8 @@ namespace AthliQ.Repository.Data.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
                     b.Property<double>("TestResult")
                         .HasColumnType("float");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("ChildId", "TestId");
 

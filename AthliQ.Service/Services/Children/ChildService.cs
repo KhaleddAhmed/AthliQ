@@ -261,7 +261,7 @@ namespace AthliQ.Service.Services.Children
                 Name = child.Name,
                 Gender = child.Gender,
                 BirthDate = child.DateOfBirth,
-                Height = child.Hieght,
+                Height = child.Height,
                 Weight = child.Weight,
                 HasDoctorApproval = child.IsAgreeDoctorApproval,
                 HasNormalBloodTest = child.IsNormalBloodTest,
@@ -613,10 +613,12 @@ namespace AthliQ.Service.Services.Children
             var genericResponse = new GenericResponse<GetChildDetailsDto>();
 
             //Find the Child with the passed Id in the DB with his tests and Resulted Category
-            var child = await _unitOfWork.Repository<Child, int>()
-                                         .Get(c => c.Id == childId && c.IsDeleted == false).Result
-                                         .Include(c => c.ChildTests).Include(c => c.ChildResults)
-                                         .FirstOrDefaultAsync();
+            var child = await _unitOfWork
+                .Repository<Child, int>()
+                .Get(c => c.Id == childId && c.IsDeleted == false)
+                .Result.Include(c => c.ChildTests)
+                .Include(c => c.ChildResults)
+                .FirstOrDefaultAsync();
 
             //Check if the child is Null (Not Found)
             if (child is null)
@@ -626,120 +628,124 @@ namespace AthliQ.Service.Services.Children
                 return genericResponse;
             }
 
-			//If Not Null (Found),
+            //If Not Null (Found),
 
             //Find the Prefered Sports and Parent Sport in DB
-			var preferedSport = await _unitOfWork.Repository<Sport, int>()
-			                                      .Get(s => s.Id == child.SportPreferenceId).Result
-			                                      .FirstOrDefaultAsync();
-            if(preferedSport is null)
+            var preferedSport = await _unitOfWork
+                .Repository<Sport, int>()
+                .Get(s => s.Id == child.SportPreferenceId)
+                .Result.FirstOrDefaultAsync();
+            if (preferedSport is null)
             {
                 genericResponse.StatusCode = StatusCodes.Status200OK;
                 genericResponse.Message = "No Prefered Sport Found";
                 return genericResponse;
             }
-			var perferedSportsList = new List<string>() { preferedSport.Name };
+            var perferedSportsList = new List<string>() { preferedSport.Name };
 
+            var parentSportHistory = await _unitOfWork
+                .Repository<Sport, int>()
+                .Get(s => s.Id == child.ParentSportHistoryId)
+                .Result.FirstOrDefaultAsync();
+            if (parentSportHistory is null)
+            {
+                genericResponse.StatusCode = StatusCodes.Status200OK;
+                genericResponse.Message = "No Sport For The Parent Found";
+                return genericResponse;
+            }
 
-			var parentSportHistory = await _unitOfWork.Repository<Sport, int>()
-				                                      .Get(s => s.Id == child.ParentSportHistoryId).Result
-				                                      .FirstOrDefaultAsync();
-			if (parentSportHistory is null)
-			{
-				genericResponse.StatusCode = StatusCodes.Status200OK;
-				genericResponse.Message = "No Sport For The Parent Found";
-				return genericResponse;
-			}
-
-			var parentSportsHistoryList = new List<string> { parentSportHistory.Name };
-
-            
+            var parentSportsHistoryList = new List<string> { parentSportHistory.Name };
 
             //Find Child Tests in DB
-            var childTests = await _unitOfWork.Repository<ChildTest, int>()
-                                              .Get(ct=>ct.ChildId == child.Id).Result
-                                              .ToListAsync();
+            var childTests = await _unitOfWork
+                .Repository<ChildTest, int>()
+                .Get(ct => ct.ChildId == child.Id)
+                .Result.ToListAsync();
 
             var testWithValueList = new List<TestWithValueDto>();
 
-			if (childTests?.Count > 0)
-			{
-				foreach (var childTest in childTests)
-				{
-					var test = await _unitOfWork.Repository<Test, int>()
-												.Get(t => t.Id == childTest.TestId).Result
-												.FirstOrDefaultAsync();
-					if (test is null)
-					{
-						genericResponse.StatusCode = StatusCodes.Status200OK;
-						genericResponse.Message = "No Test Values Found";
-						return genericResponse;
-					}
+            if (childTests?.Count > 0)
+            {
+                foreach (var childTest in childTests)
+                {
+                    var test = await _unitOfWork
+                        .Repository<Test, int>()
+                        .Get(t => t.Id == childTest.TestId)
+                        .Result.FirstOrDefaultAsync();
+                    if (test is null)
+                    {
+                        genericResponse.StatusCode = StatusCodes.Status200OK;
+                        genericResponse.Message = "No Test Values Found";
+                        return genericResponse;
+                    }
 
-					testWithValueList.Add(new TestWithValueDto()
-					{
-						Name = test.Name,
-						TestResult = childTest.TestResult
-					});
-				}
-			}
+                    testWithValueList.Add(
+                        new TestWithValueDto()
+                        {
+                            Name = test.Name,
+                            TestResult = childTest.TestResult,
+                        }
+                    );
+                }
+            }
 
-			//Find Child Result in DB
-			var childResult = await _unitOfWork.Repository<ChildResult , int>()
-                                               .Get(cr=>cr.ChildId == child.Id).Result
-                                               .FirstOrDefaultAsync();
-            if(childResult is null)
+            //Find Child Result in DB
+            var childResult = await _unitOfWork
+                .Repository<ChildResult, int>()
+                .Get(cr => cr.ChildId == child.Id)
+                .Result.FirstOrDefaultAsync();
+            if (childResult is null)
             {
                 genericResponse.StatusCode = StatusCodes.Status404NotFound;
                 genericResponse.Message = "Child Is Not Evaluated To Have A Result";
                 return genericResponse;
             }
-            
-            var category = await _unitOfWork.Repository<Category, int>()
-                                            .Get(c => c.Id == childResult.CategoryId).Result
-                                            .Select(c => c.Name)
-                                            .FirstOrDefaultAsync();
-			if (category is null)
+
+            var category = await _unitOfWork
+                .Repository<Category, int>()
+                .Get(c => c.Id == childResult.CategoryId)
+                .Result.Select(c => c.Name)
+                .FirstOrDefaultAsync();
+            if (category is null)
             {
                 genericResponse.StatusCode = StatusCodes.Status200OK;
                 genericResponse.Message = "No Category Is Found";
                 return genericResponse;
             }
-				
 
-			var sports = await _unitOfWork.Repository<Sport , int>()
-                                          .Get(s=>s.CategoryId == childResult.CategoryId).Result
-                                          .Select(s=>s.Name)
-                                          .ToListAsync();
-			if (!sports.Any())
+            var sports = await _unitOfWork
+                .Repository<Sport, int>()
+                .Get(s => s.CategoryId == childResult.CategoryId)
+                .Result.Select(s => s.Name)
+                .ToListAsync();
+            if (!sports.Any())
             {
                 genericResponse.StatusCode = StatusCodes.Status200OK;
                 genericResponse.Message = "No Sport Is Found";
                 return genericResponse;
             }
 
-			var returnedChild = new GetChildDetailsDto()
-			{
-				Name = child.Name,
-				Gender = child.Gender,
-				DateOfBirth = child.DateOfBirth,
-				SchoolName = child.SchoolName,
-				ClubName = child.ClubName,
-				Hieght = child.Hieght,
-				Weight = child.Weight,
-				PreferredSports = perferedSportsList,
-				ParentSportsHistory = parentSportsHistoryList,
+            var returnedChild = new GetChildDetailsDto()
+            {
+                Name = child.Name,
+                Gender = child.Gender,
+                DateOfBirth = child.DateOfBirth,
+                SchoolName = child.SchoolName,
+                ClubName = child.ClubName,
+                Height = child.Height,
+                Weight = child.Weight,
+                PreferredSports = perferedSportsList,
+                ParentSportsHistory = parentSportsHistoryList,
                 Tests = testWithValueList,
-				Category = category,
-                Sports = sports
-               
-			};
-			genericResponse.StatusCode = StatusCodes.Status200OK;
+                Category = category,
+                Sports = sports,
+            };
+            genericResponse.StatusCode = StatusCodes.Status200OK;
             genericResponse.Message = "Child Is Successfully Retrieved";
             genericResponse.Data = returnedChild;
 
             return genericResponse;
-		}
+        }
 
         private async Task<string> SendPlayerDataAsync(object player)
         {
