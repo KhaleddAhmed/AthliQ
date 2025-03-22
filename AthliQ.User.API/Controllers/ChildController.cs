@@ -42,17 +42,17 @@ namespace AthliQ.User.API.Controllers
                 pageSize,
                 pageIndex
             );
-			return Ok(result);
-		}
+            return Ok(result);
+        }
 
         [HttpGet("ViewChildDetails")]
-        [Authorize(Roles ="User")]
+        [Authorize(Roles = "User")]
         public async Task<ActionResult> ViewById(int childId)
         {
-			var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var child = await _childService.ViewChildAsync(childId);
             return Ok(child);
-		}
+        }
 
         [HttpDelete("DeleteChild")]
         [Authorize(Roles = "User")]
@@ -63,7 +63,7 @@ namespace AthliQ.User.API.Controllers
             return Ok(result);
         }
 
-        [HttpPost("EvaluteChildResult")]
+        [HttpGet("EvaluteChildResult")]
         [Authorize(Roles = "User")]
         public async Task<ActionResult> Evaluate(int childId)
         {
