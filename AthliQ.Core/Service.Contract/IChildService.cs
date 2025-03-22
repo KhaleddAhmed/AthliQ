@@ -10,7 +10,10 @@ namespace AthliQ.Core.Service.Contract
 {
     public interface IChildService
     {
-        Task<GenericResponse<bool>> CreateChildAsync(string userId, CreateChildDto createChildDto);
+        Task<GenericResponse<CreationOfChildReturnDto>> CreateChildAsync(
+            string userId,
+            CreateChildDto createChildDto
+        );
         Task<GenericResponse<GetAllChildWithTotalCountDto>> ViewAllChildrenAsync(
             string userId,
             string? search,
@@ -21,6 +24,7 @@ namespace AthliQ.Core.Service.Contract
         Task<GenericResponse<bool>> DeleteChildAsync(int childId, string userId);
 
         Task<GenericResponse<ReturnedEvaluateChildDto>> EvaluateDataAsync(int childId);
+
         //Task<GenericResponse<List<ChildResultIntegratedDto>>> EvaluateDataTestAsync(
         //    ChildToSendDto childToSendDto
         //);

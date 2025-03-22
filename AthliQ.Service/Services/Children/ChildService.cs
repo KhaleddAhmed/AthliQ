@@ -31,12 +31,12 @@ namespace AthliQ.Service.Services.Children
             _httpClient = httpClient;
         }
 
-        public async Task<GenericResponse<bool>> CreateChildAsync(
+        public async Task<GenericResponse<CreationOfChildReturnDto>> CreateChildAsync(
             string userId,
             CreateChildDto createChildDto
         )
         {
-            var genericResponse = new GenericResponse<bool>();
+            var genericResponse = new GenericResponse<CreationOfChildReturnDto>();
 
             // Case 01: If Any of entered Data is Invalid
             if (createChildDto is null)
@@ -159,9 +159,14 @@ namespace AthliQ.Service.Services.Children
                 var resultCreationOfChildTest = await _unitOfWork.CompleteAsync();
                 if (resultCreationOfChildTest > 0)
                 {
+                    var creationOfChildToReturnDto = new CreationOfChildReturnDto()
+                    {
+                        ChildId = mappedChild.Id,
+                        IsCreated = true,
+                    };
                     genericResponse.StatusCode = StatusCodes.Status201Created;
                     genericResponse.Message = "Child and its test Results Created Succesfully";
-                    genericResponse.Data = true;
+                    genericResponse.Data = creationOfChildToReturnDto;
 
                     return genericResponse;
                 }
@@ -169,7 +174,6 @@ namespace AthliQ.Service.Services.Children
 
             genericResponse.StatusCode = StatusCodes.Status200OK;
             genericResponse.Message = "Failed to Create Child and its test Results";
-            genericResponse.Data = false;
             return genericResponse;
         }
 
