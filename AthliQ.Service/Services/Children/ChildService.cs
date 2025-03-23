@@ -499,7 +499,7 @@ namespace AthliQ.Service.Services.Children
         )
         {
             var genericResponse = new GenericResponse<GetAllChildWithTotalCountDto>();
-
+            List<GetAllChildDto> getAllChildDtos = new List<GetAllChildDto>();
             var totalCount = await _unitOfWork
                 .Repository<Child, int>()
                 .Get(c => c.AthliQUserId == userId && c.IsDeleted != true)
@@ -545,12 +545,14 @@ namespace AthliQ.Service.Services.Children
                             return genericResponse;
                         }
                         child.Category = category.Name;
+
+                        getAllChildDtos.Add(child);
                     }
                 }
                 var returnedSearchedData = new GetAllChildWithTotalCountDto()
                 {
                     TotalCount = totalCount,
-                    Children = mappedFilteredChildren,
+                    Children = getAllChildDtos,
                 };
 
                 genericResponse.StatusCode = StatusCodes.Status200OK;
@@ -598,13 +600,14 @@ namespace AthliQ.Service.Services.Children
                         return genericResponse;
                     }
                     child.Category = category.Name;
+                    getAllChildDtos.Add(child);
                 }
             }
 
             var returnedData = new GetAllChildWithTotalCountDto()
             {
                 TotalCount = totalCount,
-                Children = mappedChildren,
+                Children = getAllChildDtos,
             };
             genericResponse.StatusCode = StatusCodes.Status200OK;
             genericResponse.Message = "Success to retreive all children";

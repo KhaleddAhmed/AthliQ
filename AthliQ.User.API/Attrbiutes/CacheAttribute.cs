@@ -44,7 +44,7 @@ namespace AthliQ.User.API.Attrbiutes
                 await cacheService.SetCacheKeyAsync(
                     cacheKey,
                     response,
-                    TimeSpan.FromHours(_expireTime)
+                    TimeSpan.FromSeconds(_expireTime)
                 );
             }
         }
