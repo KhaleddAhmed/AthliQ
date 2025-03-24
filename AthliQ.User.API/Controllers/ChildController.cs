@@ -28,7 +28,7 @@ namespace AthliQ.User.API.Controllers
 
         [HttpGet("ViewAllChildren")]
         [Authorize(Roles = "User")]
-        [Cache(1)]
+        [Cache(30)]
         public async Task<ActionResult> ViewAll(
             string? search,
             int? pageSize = 6,
