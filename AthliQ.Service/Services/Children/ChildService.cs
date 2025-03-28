@@ -136,6 +136,62 @@ namespace AthliQ.Service.Services.Children
                 }
             }
 
+            if (createChildDto.CreateChildTestDtos[0].TestResult < 65 || createChildDto.CreateChildTestDtos[0].TestResult > 140)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Out Of Range Input for Standing Long Jump Test";
+                return genericResponse;
+            }
+
+            if (createChildDto.CreateChildTestDtos[1].TestResult < 0.0 || createChildDto.CreateChildTestDtos[1].TestResult > 18.0)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Out Of Range Input for Sit-and-Reach Flexibility Test";
+                return genericResponse;
+            }
+
+            if (createChildDto.CreateChildTestDtos[2].TestResult < 2.49 || createChildDto.CreateChildTestDtos[2].TestResult > 10.0)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Out Of Range Input for One-Leg Stand Test";
+                return genericResponse;
+            }
+
+            if (createChildDto.CreateChildTestDtos[3].TestResult < 5.48 || createChildDto.CreateChildTestDtos[3].TestResult > 22.0)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Out Of Range Input for Sit-up Test";
+                return genericResponse;
+            }
+
+            if (createChildDto.CreateChildTestDtos[4].TestResult < 125 || createChildDto.CreateChildTestDtos[4].TestResult > 335)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Out Of Range Input for Medicine Ball Push (1 kg) from Standing Position Test";
+                return genericResponse;
+            }
+
+            if (createChildDto.CreateChildTestDtos[5].TestResult < 3 || createChildDto.CreateChildTestDtos[5].TestResult > 9)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Out Of Range Input for Straight-Line Walking (3 meters) Test";
+                return genericResponse;
+            }
+
+            if (createChildDto.CreateChildTestDtos[6].TestResult < 5.485 || createChildDto.CreateChildTestDtos[6].TestResult > 10.295)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Out Of Range Input for 30-Meter Sprint Test";
+                return genericResponse;
+            }
+
+            if (createChildDto.CreateChildTestDtos[7].TestResult < 5.1 || createChildDto.CreateChildTestDtos[7].TestResult > 9.6)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Out Of Range Input for 15-Meter Zigzag Run Test";
+                return genericResponse;
+            }
+
             var mappedChild = _mapper.Map<Child>(createChildDto);
             mappedChild.ImageFrontURL = createChildDto.FrontImageName;
             mappedChild.ImageSideURL = createChildDto.SideImageName;
