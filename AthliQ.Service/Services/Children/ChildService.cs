@@ -143,7 +143,7 @@ namespace AthliQ.Service.Services.Children
                 return genericResponse;
             }
 
-            if (createChildDto.CreateChildTestDtos[1].TestResult < 0.0 || createChildDto.CreateChildTestDtos[1].TestResult > 10.0)
+            if (createChildDto.CreateChildTestDtos[1].TestResult < 0.0 || createChildDto.CreateChildTestDtos[1].TestResult > 18.0)
             {
                 genericResponse.StatusCode = StatusCodes.Status400BadRequest;
                 genericResponse.Message = "Out Of Range Input for Sit-and-Reach Flexibility Test";
