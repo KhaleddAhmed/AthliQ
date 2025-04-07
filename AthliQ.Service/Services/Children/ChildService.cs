@@ -455,6 +455,90 @@ namespace AthliQ.Service.Services.Children
             return genericResponse;
         }
 
+        public async Task<GenericResponse<ChildTestsGrades>> GetChildTestGradesAsync(int childId)
+        {
+            var genericResponse = new GenericResponse<ChildTestsGrades>();
+            var child = await _unitOfWork
+                .Repository<Child, int>()
+                .Get(c => c.Id == childId)
+                .Result.Include(c => c.ChildTests)
+                .FirstOrDefaultAsync();
+            if (child is null)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Invalid Child to Get Its Test Grades";
+
+                return genericResponse;
+            }
+
+            if (!child.ChildTests.Any())
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Child doesn't have test values to get its Grades";
+
+                return genericResponse;
+            }
+
+            var listOfScores = child
+                .ChildTests.OrderBy(ct => ct.TestId)
+                .Select(ct => ct.TestResult)
+                .ToList();
+
+            var childToSendDto = new ChildToSendWithOnlyScoresDto
+            {
+                Name = child.Name,
+                TestScores = listOfScores,
+            };
+
+            var ChildResult = await SendPlayerDataToGetGradesAsync(childToSendDto);
+            if (ChildResult is null)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Failed to Get Child Test Grades";
+                return genericResponse;
+            }
+            var jsonPolicy = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
+            var integrationResult = JsonSerializer.Deserialize<JavaChildTestGradesDto>(
+                ChildResult,
+                jsonPolicy
+            );
+
+            if (integrationResult is null)
+            {
+                genericResponse.StatusCode = StatusCodes.Status200OK;
+                genericResponse.Message = "Failed to Deserilaize the returned content";
+
+                return genericResponse;
+            }
+
+            var result = integrationResult
+                .TestScores.Select(gl => new TestGradesDto { TestName = gl.Key, Grade = gl.Value })
+                .ToList();
+
+            for (int i = 0; i < result.Count; i++)
+            {
+                result[i].TestId = i + 1;
+                if (result[i].Grade < 50)
+                    result[i].Evaluation = "Weak";
+                else if (result[i].Grade >= 51 && result[i].Grade <= 75)
+                    result[i].Evaluation = "Moderate";
+                else if (result[i].Grade > 75 && result[i].Grade <= 90)
+                    result[i].Evaluation = "Very Good";
+                else
+                    result[i].Evaluation = "Super";
+            }
+
+            var childToReturn = new ChildTestsGrades { Name = child.Name, TestGradesDtos = result };
+
+            genericResponse.StatusCode = StatusCodes.Status200OK;
+            genericResponse.Message = "Success to Retreieve Test Child Grades";
+            genericResponse.Data = childToReturn;
+            return genericResponse;
+        }
+
         #region Test
         //public async Task<GenericResponse<List<ChildResultIntegratedDto>>> EvaluateDataTestAsync(
         //    ChildToSendDto player
@@ -857,6 +941,31 @@ namespace AthliQ.Service.Services.Children
             {
                 var response = await _httpClient.PostAsync(
                     $"{_configuration["DroolsUrl"]}/player/categorize",
+                    content
+                );
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content.ReadAsStringAsync();
+            }
+            catch (Exception ex)
+            {
+                return $" Error sending data to Drools API: {ex.Message}";
+            }
+        }
+
+        private async Task<string> SendPlayerDataToGetGradesAsync(object player)
+        {
+            var jsonOptionsPolicy = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            };
+            var json = JsonSerializer.Serialize(player, jsonOptionsPolicy);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            try
+            {
+                var response = await _httpClient.PostAsync(
+                    $"{_configuration["DroolsUrl"]}/player/grade",
                     content
                 );
                 response.EnsureSuccessStatusCode();
