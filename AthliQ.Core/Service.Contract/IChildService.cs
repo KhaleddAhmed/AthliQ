@@ -29,6 +29,8 @@ namespace AthliQ.Core.Service.Contract
         //    ChildToSendDto childToSendDto
         //);
 
+        Task<GenericResponse<ChildTestsGrades>> GetChildTestGradesAsync(int childId);
+
         Task<GenericResponse<GetChildDetailsDto>> ViewChildAsync(int childId);
     }
 }

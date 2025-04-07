@@ -79,5 +79,13 @@ namespace AthliQ.User.API.Controllers
         //    return Ok(result);
         //}
         #endregion
+
+        [HttpGet("GetChildTestGrades")]
+        [Authorize(Roles = "User")]
+        public async Task<ActionResult> GetGrades(int childId)
+        {
+            var result = await _childService.GetChildTestGradesAsync(childId);
+            return Ok(result);
+        }
     }
 }
