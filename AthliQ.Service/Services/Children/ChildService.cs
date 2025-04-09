@@ -521,7 +521,7 @@ namespace AthliQ.Service.Services.Children
             for (int i = 0; i < result.Count; i++)
             {
                 result[i].TestId = i + 1;
-                if (result[i].Grade < 50)
+                if (result[i].Grade <= 50)
                     result[i].Evaluation = "Weak";
                 else if (result[i].Grade >= 51 && result[i].Grade <= 75)
                     result[i].Evaluation = "Moderate";
@@ -531,6 +531,35 @@ namespace AthliQ.Service.Services.Children
                     result[i].Evaluation = "Super";
             }
 
+            foreach (var item in result)
+            {
+                if (
+                    (item.TestId == 1 && item.Evaluation == "Weak")
+                    || (item.TestId == 5 && item.Evaluation == "Weak")
+                )
+                    item.HowToEnhance =
+                        "Lift heavy weights (low reps, high intensity), progressively overload, rest adequately, and eat enough protein.";
+                else if (
+                    (item.TestId == 2 && item.Evaluation == "Weak")
+                    || (item.TestId == 4 && item.Evaluation == "Weak")
+                )
+                    item.HowToEnhance =
+                        "Lift lighter weights with higher reps, reduce rest time, train consistently, and maintain proper nutrition and hydration.";
+                else if (
+                    (item.TestId == 3 && item.Evaluation == "Weak")
+                    || (item.TestId == 6 && item.Evaluation == "Weak")
+                )
+                    item.HowToEnhance =
+                        "Practice balance exercises, strengthen core muscles, improve coordination, and train consistently on unstable surfaces (e.g., balance boards)";
+                else if (
+                    (item.TestId == 7 && item.Evaluation == "Weak")
+                    || (item.TestId == 8 && item.Evaluation == "Weak")
+                )
+                    item.HowToEnhance =
+                        "Do agility drills (like ladder or cone drills), improve reaction time, increase speed and coordination, and practice sport-specific movements regularly";
+                else
+                    item.HowToEnhance = null;
+            }
             var childToReturn = new ChildTestsGrades { Name = child.Name, TestGradesDtos = result };
 
             genericResponse.StatusCode = StatusCodes.Status200OK;
@@ -965,9 +994,14 @@ namespace AthliQ.Service.Services.Children
             try
             {
                 var response = await _httpClient.PostAsync(
-                    $"{_configuration["DroolsUrl"]}/player/grade",
+                    $"{_configuration["DroolsUrl"]}/player/getGrade",
                     content
                 );
+                if (!response.IsSuccessStatusCode)
+                {
+                    return $"{response.RequestMessage}-{response.Headers}";
+                }
+
                 response.EnsureSuccessStatusCode();
 
                 return await response.Content.ReadAsStringAsync();
