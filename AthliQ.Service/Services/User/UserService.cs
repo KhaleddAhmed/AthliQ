@@ -123,7 +123,7 @@ namespace AthliQ.Service.Services.User
                         var userclub = new UserClub
                         {
                             AthliQUserId = mappedUser.Id,
-                            ClubName = club,
+                            ClubName = club
                         };
 
                         await _unitOfWork.Repository<UserClub, int>().AddAsync(userclub);

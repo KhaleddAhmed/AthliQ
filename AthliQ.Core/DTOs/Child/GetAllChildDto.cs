@@ -14,5 +14,7 @@ namespace AthliQ.Core.DTOs.Child
         public DateOnly DateOfBirth { get; set; }
 
         public string? Category { get; set; }
+        public string? CategoryAr { get; set; }
+
     }
 }

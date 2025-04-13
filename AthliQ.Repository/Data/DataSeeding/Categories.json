@@ -2,21 +2,25 @@
   {
     "Name": "Muscular Strength",
     "ArabicName": "القوة العضلية",
-    "Description": "Muscular strength is the ability of a muscle or a group of muscles to exert maximum force against resistance in a single effort. It is a key component of physical fitness that contributes to movement efficiency, stability, and overall athletic performance. Muscular strength enables individuals to perform tasks that require power, lifting, pushing, or pulling while supporting joint health and injury prevention. It can be developed through resistance training, weightlifting, and bodyweight exercises."
+    "Description": "Muscular strength is the ability of a muscle or a group of muscles to exert maximum force against resistance in a single effort. It is a key component of physical fitness that contributes to movement efficiency, stability, and overall athletic performance. Muscular strength enables individuals to perform tasks that require power, lifting, pushing, or pulling while supporting joint health and injury prevention. It can be developed through resistance training, weightlifting, and bodyweight exercises.",
+    "DescriptionAr": "القوة العضلية هي قدرة العضلة أو مجموعة من العضلات على إنتاج أقصى قوة ضد المقاومة في جهد واحد. وهي عنصر أساسي في اللياقة البدنية، حيث تساهم في كفاءة الحركة، والاستقرار، وتحسين الأداء الرياضي العام. تمكن القوة العضلية الأفراد من أداء المهام التي تتطلب القوة، مثل الرفع والدفع والسحب، كما تساعد في دعم صحة المفاصل والوقاية من الإصابات. يمكن تطويرها من خلال تمارين المقاومة، ورفع الأثقال، والتمارين التي تعتمد على وزن الجسم"
   },
   {
     "Name": "Muscular Endurance",
     "ArabicName": "التحمل العضلي",
-    "Description": "Muscular endurance refers to the ability of a muscle or group of muscles to sustain repeated contractions or maintain force over an extended period without fatigue. It is essential in sports that require prolonged physical exertion.Athletes with high muscular endurance can perform activities with sustained effort, delaying muscle fatigue and enhancing overall performance."
+    "Description": "Muscular endurance refers to the ability of a muscle or group of muscles to sustain repeated contractions or maintain force over an extended period without fatigue. It is essential in sports that require prolonged physical exertion.Athletes with high muscular endurance can perform activities with sustained effort, delaying muscle fatigue and enhancing overall performance.",
+    "DescriptionAr": "تشير القدرة العضلية على التحمل كفئة رياضية إلى قدرة العضلة أو مجموعة من العضلات على تنفيذ انقباضات متكررة أو الحفاظ على القوة لفترة طويلة دون الشعور بالإرهاق. تعتبر ضرورية في الرياضات التي تتطلب مجهودًا بدنيًا مستمرًا، مثل السباحة، الجري لمسافات طويلة، ركوب الدراجات، والتجديف. يتمتع الرياضيون الذين لديهم قدرة عضلية عالية على التحمل بقدرة أكبر على أداء الأنشطة لفترات طويلة، مما يساعدهم على تأخير التعب وتحسين الأداء العام "
   },
   {
     "Name": "Balance",
     "ArabicName": "التوازن",
-    "Description": "Balance refers to the ability to maintain body stability and control either in a stationary position (static balance) or while in motion (dynamic balance). It is a fundamental skill in various sports , where precise body coordination and stability are required. Good balance enhances movement efficiency, prevents falls, and improves overall athletic performance."
+    "Description": "Balance refers to the ability to maintain body stability and control either in a stationary position (static balance) or while in motion (dynamic balance). It is a fundamental skill in various sports , where precise body coordination and stability are required. Good balance enhances movement efficiency, prevents falls, and improves overall athletic performance.",
+    "DescriptionAr": "يشير التوازن كفئة رياضية إلى قدرة الجسم على الحفاظ على الاستقرار والتحكم سواء في وضعية ثابتة (التوازن الثابت) أو أثناء الحركة (التوازن الديناميكي). يُعد مهارة أساسية في العديد من الرياضات، مثل الجمباز، الباليه، التزلج على الجليد، والفنون القتالية، حيث تتطلب دقة في تنسيق الحركات والثبات. يساعد التوازن الجيد على تحسين كفاءة الحركة، منع السقوط، وتعزيز الأداء الرياضي العام."
   },
   {
     "Name": "Speed and Agility",
-    "ArabicName": "السرعة والرشاقة:",
-    "Description": "Speed and agility refer to the ability to move rapidly and change direction efficiently while maintaining control and balance. Speed is the capacity to cover a distance in the shortest time possible, while agility involves quick changes in movement direction with precision and coordination. These attributes are essential in some sports , where rapid acceleration, sudden stops, and directional shifts are crucial for performance."
+    "ArabicName": "السرعة والرشاقة",
+    "Description": "Speed and agility refer to the ability to move rapidly and change direction efficiently while maintaining control and balance. Speed is the capacity to cover a distance in the shortest time possible, while agility involves quick changes in movement direction with precision and coordination. These attributes are essential in some sports , where rapid acceleration, sudden stops, and directional shifts are crucial for performance.",
+    "DescriptionAr": "تشير السرعة والرشاقة كفئة رياضية إلى القدرة على التحرك بسرعة وتغيير الاتجاه بكفاءة مع الحفاظ على التحكم والتوازن. السرعة هي القدرة على قطع مسافة في أقصر وقت ممكن، بينما تتعلق الرشاقة بالقدرة على تغيير الاتجاهات بسرعة وبدقة وتنسيق. تُعد هذه الصفات ضرورية في الرياضات مثل كرة القدم، كرة السلة، التنس، وسباقات العدو، حيث يكون التسارع السريع، والتوقف المفاجئ، وتغيير الاتجاهات عوامل حاسمة في الأداء."
   }
 ]

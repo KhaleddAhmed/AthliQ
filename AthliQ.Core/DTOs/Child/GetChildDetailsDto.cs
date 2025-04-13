@@ -24,6 +24,8 @@ namespace AthliQ.Core.DTOs.Child
         public List<TestWithValueDto> Tests { get; set; }
 
         public string Category { get; set; }
+        public string CategoryAr { get; set; }
         public List<string> Sports { get; set; }
+        public List<string> SportsAr { get; set; }
     }
 }

@@ -68,6 +68,7 @@ namespace AthliQ.Service.Services.Tests
             {
                 var returnedTest = _mapper.Map<GetTestDto>(mappedTest);
                 returnedTest.CategoryName = category.Name;
+                returnedTest.CategoryNameAr = category.ArabicName;
                 genericResponse.StatusCode = StatusCodes.Status201Created;
                 genericResponse.Message = "Test is Created Succesfully";
                 genericResponse.Data = returnedTest;

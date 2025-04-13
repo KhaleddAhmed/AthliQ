@@ -20,5 +20,8 @@ namespace AthliQ.Core.DTOs.Category
 
         [StringLength(200, ErrorMessage = "Category Description Can Not Contain More Than 200 Character")]
         public string Description { get; set; }
-    }
+		
+        [StringLength(400, ErrorMessage = "Category Description Can Not Contain More Than 400 Character")]
+		public string DescriptionAr { get; set; }
+	}
 }

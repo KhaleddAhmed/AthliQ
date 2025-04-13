@@ -56,9 +56,21 @@ namespace AthliQ.Service.Services.Categories
                 return genericResponse;
             }
 
-            //If the Category does Not Exists ,
-            //4.Map the DTO to Domain Model
-            var createdCategory = _mapper.Map<CreateCategoryDto, Category>(createCategoryDto);
+			var categoryAr = await _unitOfWork.Repository<Category, int>()
+										   .Get(c => c.ArabicName == createCategoryDto.ArabicName)
+										   .Result.FirstOrDefaultAsync();
+			
+			if (categoryAr is not null)
+			{
+				genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+				genericResponse.Message = "Already existed Category";
+
+				return genericResponse;
+			}
+
+			//If the Category does Not Exists ,
+			//4.Map the DTO to Domain Model
+			var createdCategory = _mapper.Map<CreateCategoryDto, Category>(createCategoryDto);
 
             //5.Add it to DB and SaveChanges
             await _unitOfWork.Repository<Category, int>().AddAsync(createdCategory);

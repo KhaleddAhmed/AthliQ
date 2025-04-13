@@ -15,12 +15,16 @@ namespace AthliQ.Core.DTOs.Sport
         [StringLength(20, ErrorMessage = "Sport Name Can Not Contain More Than 20 Charachter")]
         public string Name { get; set; }
 
-        [StringLength(40, ErrorMessage = "Sport Arabic Name Can Not Contain More Than 40 Charachter")]
+
+		[StringLength(40, ErrorMessage = "Sport Arabic Name Can Not Contain More Than 40 Charachter")]
         public string ArabicName { get; set; }
 
         [StringLength(200, ErrorMessage = "Sport Description Can Not Contain More Than 200 Charachter")]
         public string Description { get; set; }
 
-        public int CategoryId { get; set; }
+		[StringLength(400, ErrorMessage = "Sport Description Can Not Contain More Than 400 Charachter")]
+		public string DescriptionAr { get; set; }
+
+		public int CategoryId { get; set; }
     }
 }

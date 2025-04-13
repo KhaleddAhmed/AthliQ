@@ -12,7 +12,9 @@ namespace AthliQ.Core.DTOs.Child
         public string TestName { get; set; }
         public double Grade { get; set; }
         public string Evaluation { get; set; }
+        public string EvaluationAr { get; set; }
 
         public string? HowToEnhance { get; set; }
+        public string? HowToEnhanceAr { get; set; }
     }
 }

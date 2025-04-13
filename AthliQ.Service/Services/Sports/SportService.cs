@@ -76,6 +76,7 @@ namespace AthliQ.Service.Services.Sports
                 //11.Map the Domain Model to DTO
                 var returnedSport = _mapper.Map<GetSportDto>(mappedSport);
                 returnedSport.CategoryName = category.Name;
+                returnedSport.CategoryNameAr = category.ArabicName;
 
                 genericResponse.StatusCode = StatusCodes.Status201Created;
                 genericResponse.Message = "Sport Created Successfully";
