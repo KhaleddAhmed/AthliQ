@@ -37,17 +37,18 @@ namespace AthliQ.Core.Mapping
             CreateMap<Category, GetCategoryWithSportsDto>()
                 .ForMember(
                     dto => dto.SportsName,
-                    options => options.MapFrom(c => c.Sports.Select(s => s.Name))
-                );
-            CreateMap<Category, GetAllCategoriesDto>();
-            CreateMap<UpdateCategoryDto, Category>();
+                    options => options.MapFrom(c => c.Sports.Select(s => s.Name)))
+				.ForMember(dto => dto.SportsNameAr, options => options.MapFrom(c => c.Sports.Select(s => s.ArabicName)));
+			CreateMap<Category, GetAllCategoriesDto>();
+			CreateMap<UpdateCategoryDto, Category>();
         }
 
         private void MapTest()
         {
             CreateMap<CreateTestDto, Test>();
             CreateMap<Test, GetTestDto>()
-                .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category.Name));
+                .ForMember(d => d.CategoryName, o => o.MapFrom(s => s.Category.Name))
+                .ForMember(d => d.CategoryNameAr , options => options.MapFrom(s => s.Category.ArabicName));
             CreateMap<Test, GetAllTestDto>();
             CreateMap<UpdateTestDto, Test>();
         }
@@ -58,8 +59,8 @@ namespace AthliQ.Core.Mapping
             CreateMap<Sport, GetSportDto>()
                 .ForMember(
                     dto => dto.CategoryName,
-                    options => options.MapFrom(s => s.Category.Name)
-                );
+                    options => options.MapFrom(s => s.Category.Name))
+                .ForMember(dto => dto.CategoryNameAr , options => options.MapFrom(s => s.Category.ArabicName));
             CreateMap<Sport, GetAllSportsDto>();
             CreateMap<UpdateSportDto, Sport>();
             CreateMap<Sport, ResultedSportDto>();

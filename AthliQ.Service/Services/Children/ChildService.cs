@@ -520,47 +520,63 @@ namespace AthliQ.Service.Services.Children
 
             for (int i = 0; i < result.Count; i++)
             {
-                result[i].TestId = i + 1;
-                if (result[i].Grade <= 50)
-                    result[i].Evaluation = "Weak";
-                else if (result[i].Grade >= 51 && result[i].Grade <= 75)
-                    result[i].Evaluation = "Moderate";
-                else if (result[i].Grade > 75 && result[i].Grade <= 90)
-                    result[i].Evaluation = "Very Good";
-                else
-                    result[i].Evaluation = "Super";
-            }
+				result[i].TestId = i + 1;
+				if (result[i].Grade <= 50)
+				{
+					result[i].Evaluation = "Weak";
+					result[i].EvaluationAr = "ضعيف";
+				}
+				else if (result[i].Grade >= 51 && result[i].Grade <= 75)
+				{
+					result[i].Evaluation = "Moderate";
+					result[i].EvaluationAr = "متوسط";
+				}
+				else if (result[i].Grade > 75 && result[i].Grade <= 90)
+				{
+					result[i].Evaluation = "Very Good";
+					result[i].EvaluationAr = "جيد جدا";
+				}
+				else
+				{
+					result[i].Evaluation = "Super";
+					result[i].EvaluationAr = "ممتاز";
+				}
+			}
 
-            foreach (var item in result)
-            {
-                if (
-                    (item.TestId == 1 && item.Evaluation == "Weak")
-                    || (item.TestId == 5 && item.Evaluation == "Weak")
-                )
-                    item.HowToEnhance =
-                        "Lift heavy weights (low reps, high intensity), progressively overload, rest adequately, and eat enough protein.";
-                else if (
-                    (item.TestId == 2 && item.Evaluation == "Weak")
-                    || (item.TestId == 4 && item.Evaluation == "Weak")
-                )
-                    item.HowToEnhance =
-                        "Lift lighter weights with higher reps, reduce rest time, train consistently, and maintain proper nutrition and hydration.";
-                else if (
-                    (item.TestId == 3 && item.Evaluation == "Weak")
-                    || (item.TestId == 6 && item.Evaluation == "Weak")
-                )
-                    item.HowToEnhance =
-                        "Practice balance exercises, strengthen core muscles, improve coordination, and train consistently on unstable surfaces (e.g., balance boards)";
-                else if (
-                    (item.TestId == 7 && item.Evaluation == "Weak")
-                    || (item.TestId == 8 && item.Evaluation == "Weak")
-                )
-                    item.HowToEnhance =
-                        "Do agility drills (like ladder or cone drills), improve reaction time, increase speed and coordination, and practice sport-specific movements regularly";
-                else
-                    item.HowToEnhance = null;
-            }
-            var childToReturn = new ChildTestsGrades { Name = child.Name, TestGradesDtos = result };
+			foreach (var item in result)
+			{
+				if ((item.TestId == 1 && item.Evaluation == "Weak")
+					|| (item.TestId == 5 && item.Evaluation == "Weak"))
+				{
+					item.HowToEnhance = "Lift heavy weights (low reps, high intensity), progressively overload, rest adequately, and eat enough protein.";
+					item.HowToEnhanceAr = "ارفع أوزانًا ثقيلة (بتكرارات قليلة وشدة عالية)، زد الحمل تدريجيًا، خذ قسطًا كافيًا من الراحة، وتناول كمية كافية من البروتين.";
+
+				}
+				else if ((item.TestId == 2 && item.Evaluation == "Weak")
+					|| (item.TestId == 4 && item.Evaluation == "Weak"))
+				{
+					item.HowToEnhance = "Lift lighter weights with higher reps, reduce rest time, train consistently, and maintain proper nutrition and hydration.";
+					item.HowToEnhanceAr = "ارفع أوزانًا أخف مع عدد تكرارات أعلى، قلّل وقت الراحة، تدرب بانتظام، وحافظ على تغذية سليمة وترطيب جيد للجسم.";
+				}
+				else if ((item.TestId == 3 && item.Evaluation == "Weak")
+					|| (item.TestId == 6 && item.Evaluation == "Weak"))
+				{
+					item.HowToEnhance = "Practice balance exercises, strengthen core muscles, improve coordination, and train consistently on unstable surfaces (e.g., balance boards)";
+					item.HowToEnhanceAr = "مارس تمارين التوازن، قوِّ عضلات الجذع، حسِّن التنسيق الحركي، وتدرّب بانتظام على الأسطح غير المستقرة (مثل لوحات التوازن).";
+				}
+				else if ((item.TestId == 7 && item.Evaluation == "Weak")
+					|| (item.TestId == 8 && item.Evaluation == "Weak"))
+				{
+					item.HowToEnhance = "Do agility drills (like ladder or cone drills), improve reaction time, increase speed and coordination, and practice sport-specific movements regularly";
+					item.HowToEnhanceAr = "قم بتمارين الرشاقة (مثل تمارين السلم أو الأقماع)، حسّن سرعة الاستجابة، زد من سرعتك وتنسيقك الحركي، ودرّب الحركات الخاصة بالرياضة بانتظام.";
+				}
+				else
+				{
+					item.HowToEnhance = null;
+					item.HowToEnhanceAr = null;
+				}
+			}
+			var childToReturn = new ChildTestsGrades { Name = child.Name, TestGradesDtos = result };
 
             genericResponse.StatusCode = StatusCodes.Status200OK;
             genericResponse.Message = "Success to Retreieve Test Child Grades";
@@ -748,6 +764,7 @@ namespace AthliQ.Service.Services.Children
                             return genericResponse;
                         }
                         child.Category = category.Name;
+                        child.CategoryAr = category.ArabicName;
 
                         getAllChildDtos.Add(child);
                     }
@@ -803,6 +820,8 @@ namespace AthliQ.Service.Services.Children
                         return genericResponse;
                     }
                     child.Category = category.Name;
+                    child.CategoryAr = category.ArabicName;
+
                     getAllChildDtos.Add(child);
                 }
             }
@@ -893,6 +912,7 @@ namespace AthliQ.Service.Services.Children
                         new TestWithValueDto()
                         {
                             Name = test.Name,
+                            NameAr = test.ArabicName,
                             TestResult = childTest.TestResult,
                         }
                     );
@@ -916,12 +936,27 @@ namespace AthliQ.Service.Services.Children
                 .Get(c => c.Id == childResult.CategoryId)
                 .Result.Select(c => c.Name)
                 .FirstOrDefaultAsync();
-            if (category is null)
+
+
+			if (category is null)
             {
                 genericResponse.StatusCode = StatusCodes.Status200OK;
                 genericResponse.Message = "No Category Is Found";
                 return genericResponse;
             }
+
+			var categoryAr = await _unitOfWork
+				.Repository<Category, int>()
+				.Get(c => c.Id == childResult.CategoryId)
+				.Result.Select(c => c.ArabicName)
+				.FirstOrDefaultAsync();
+
+            if (categoryAr is null)
+            {
+				genericResponse.StatusCode = StatusCodes.Status200OK;
+				genericResponse.Message = "No Category Is Found";
+				return genericResponse;
+			}
 
             var sports = await _unitOfWork
                 .Repository<Sport, int>()
@@ -935,7 +970,12 @@ namespace AthliQ.Service.Services.Children
                 return genericResponse;
             }
 
-            var returnedChild = new GetChildDetailsDto()
+			var sportsAr = await _unitOfWork
+				.Repository<Sport, int>()
+				.Get(s => s.CategoryId == childResult.CategoryId)
+				.Result.Select(s => s.ArabicName)
+				.ToListAsync();
+			var returnedChild = new GetChildDetailsDto()
             {
                 Name = child.Name,
                 Gender = child.Gender,
@@ -948,7 +988,9 @@ namespace AthliQ.Service.Services.Children
                 ParentSportsHistory = parentSportsHistoryList,
                 Tests = testWithValueList,
                 Category = category,
-                Sports = sports,
+                CategoryAr = categoryAr,
+				Sports = sports,
+                SportsAr = sportsAr
             };
             genericResponse.StatusCode = StatusCodes.Status200OK;
             genericResponse.Message = "Child Is Successfully Retrieved";

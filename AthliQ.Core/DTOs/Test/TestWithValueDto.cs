@@ -9,6 +9,7 @@ namespace AthliQ.Core.DTOs.Test
 	public class TestWithValueDto
 	{
         public string Name { get; set; }
+        public string NameAr { get; set; }
 		public double TestResult { get; set; }
     }
 }

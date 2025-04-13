@@ -21,7 +21,11 @@ namespace AthliQ.Core.DTOs.Test
         [MaxLength(100, ErrorMessage = "This is Above the Max length of test Description")]
         public string Description { get; set; }
 
-        [Required(ErrorMessage = "Every test must has Category")]
+		[Required(ErrorMessage = "Test Description is Required")]
+		[MaxLength(300, ErrorMessage = "This is Above the Max length of test Description")]
+		public string DescriptionAr { get; set; }
+
+		[Required(ErrorMessage = "Every test must has Category")]
         public int CategoryId { get; set; }
     }
 }

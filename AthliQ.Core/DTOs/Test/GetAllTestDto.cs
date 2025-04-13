@@ -13,6 +13,7 @@ namespace AthliQ.Core.DTOs.Test
         public string ArabicName { get; set; }
 
         public string Description { get; set; }
+        public string DescriptionAr { get; set; }
         public int CategoryId { get; set; }
     }
 }

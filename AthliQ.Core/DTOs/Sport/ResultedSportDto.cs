@@ -9,7 +9,9 @@ namespace AthliQ.Core.DTOs.Sport
     public class ResultedSportDto
     {
         public string Name { get; set; }
+        public string ArabicName { get; set; }
 
         public string Description { get; set; }
+        public string DescriptionAr { get; set; }
     }
 }

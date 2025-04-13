@@ -21,7 +21,11 @@ namespace AthliQ.Core.DTOs.Sport
         [StringLength(200, ErrorMessage = "Sport Description Can Not Contain More Than 200 Charachter")]
         public string Description { get; set; }
 
-        [Required(ErrorMessage = "The Sport Must Belongs To A Category")]
+		[Required(ErrorMessage = "Sport Description Is Required")]
+		[StringLength(400, ErrorMessage = "Sport Description Can Not Contain More Than 400 Charachter")]
+		public string DescriptionAr { get; set; }
+
+		[Required(ErrorMessage = "The Sport Must Belongs To A Category")]
         public int CategoryId { get; set; }
     }
 }
