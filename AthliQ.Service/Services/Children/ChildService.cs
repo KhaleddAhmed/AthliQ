@@ -975,29 +975,28 @@ namespace AthliQ.Service.Services.Children
 				.Get(s => s.CategoryId == childResult.CategoryId)
 				.Result.Select(s => s.ArabicName)
 				.ToListAsync();
-			var returnedChild = new GetChildDetailsDto()
-            {
-                Name = child.Name,
-                Gender = child.Gender,
-                DateOfBirth = child.DateOfBirth,
-                SchoolName = child.SchoolName,
-                ClubName = child.ClubName,
-                Height = child.Height,
-                Weight = child.Weight,
-                PreferredSports = perferedSportsList,
-                ParentSportsHistory = parentSportsHistoryList,
-                Tests = testWithValueList,
-                Category = category,
-                CategoryAr = categoryAr,
-				Sports = sports,
-                SportsAr = sportsAr
-            };
-            genericResponse.StatusCode = StatusCodes.Status200OK;
-            genericResponse.Message = "Child Is Successfully Retrieved";
-            genericResponse.Data = returnedChild;
+			if (!sportsAr.Any())
+			{
+				genericResponse.StatusCode = StatusCodes.Status200OK;
+				genericResponse.Message = "No Sport Is Found";
+				return genericResponse;
+			}
 
-            return genericResponse;
-        }
+			var returnedChild = _mapper.Map<Child, GetChildDetailsDto>(child);
+			returnedChild.PreferredSports = perferedSportsList;
+			returnedChild.ParentSportsHistory = parentSportsHistoryList;
+			returnedChild.Tests = testWithValueList;
+			returnedChild.Category = category;
+			returnedChild.CategoryAr = categoryAr;
+			returnedChild.Sports = sports;
+			returnedChild.SportsAr = sportsAr;
+
+			genericResponse.StatusCode = StatusCodes.Status200OK;
+			genericResponse.Message = "Child Is Successfully Retrieved";
+			genericResponse.Data = returnedChild;
+
+			return genericResponse;
+		}
 
         private async Task<string> SendPlayerDataAsync(object player)
         {
