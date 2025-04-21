@@ -21,7 +21,10 @@ namespace AthliQ.Core.DTOs.Child
         public double Height { get; set; }
         public double Weight { get; set; }
 
-        public List<TestWithValueDto> Tests { get; set; }
+		public string ImageFrontURL { get; set; }
+		public string ImageSideURL { get; set; }
+
+		public List<TestWithValueDto> Tests { get; set; }
 
         public string Category { get; set; }
         public string CategoryAr { get; set; }

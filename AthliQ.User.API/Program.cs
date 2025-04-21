@@ -127,21 +127,24 @@ namespace AthliQ.User.API
                 logger.LogError(ex, "An Error Occured During Apply The Migration");
             }
 
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+			#region Configure the HTTP request pipeline.
+			if (app.Environment.IsDevelopment())
+			{
+				app.UseSwagger();
+				app.UseSwaggerUI();
+			}
 
-            app.UseHttpsRedirection();
-            app.UseAuthentication();
-            app.UseAuthorization();
-            app.UseCors("MyCors");
+			app.UseHttpsRedirection();
+			app.UseStaticFiles();
 
-            app.MapControllers();
+			app.UseAuthentication();
+			app.UseAuthorization();
+			app.UseCors("MyCors");
 
-            app.Run();
-        }
+			app.MapControllers();
+            #endregion
+
+			app.Run();
+		}
     }
 }

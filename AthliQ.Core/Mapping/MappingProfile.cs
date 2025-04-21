@@ -66,10 +66,13 @@ namespace AthliQ.Core.Mapping
             CreateMap<Sport, ResultedSportDto>();
         }
 
-        private void MapChild()
-        {
-            CreateMap<CreateChildDto, Child>();
-            CreateMap<Child, GetAllChildDto>();
-        }
-    }
+		private void MapChild()
+		{
+			CreateMap<CreateChildDto, Child>();
+			CreateMap<Child, GetAllChildDto>();
+			CreateMap<Child, GetChildDetailsDto>()
+				.ForMember(dto => dto.ImageFrontURL, options => options.MapFrom<FrontImageUrlResolver>())
+				.ForMember(dto => dto.ImageSideURL, options => options.MapFrom<SideImageUrlResolver>());
+		}
+	}
 }
