@@ -7,5 +7,6 @@ namespace AthliQ.Core.DTOs.Child
         public string TestNameAr { get; set; }
         public double TestValue { get; set; }
         public string GradeLevel { get; set; }
+        public string GradeLevelAr { get; set; }
     }
 }

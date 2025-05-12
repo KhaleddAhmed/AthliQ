@@ -511,7 +511,8 @@ namespace AthliQ.Service.Services.Children
 				TestNameEn = javaTest.TestNameEn,
 				TestNameAr = javaTest.TestNameAr,
 				TestValue = javaTest.TestValue,
-				GradeLevelEn = javaTest.GradeLevel
+				GradeLevelEn = javaTest.GradeLevel,
+                GradeLevelAr = javaTest.GradeLevelAr
 			}).ToList();
 
 
@@ -519,42 +520,42 @@ namespace AthliQ.Service.Services.Children
 			{
 				result[i].TestId = i + 1;
 
-				if ((result[i].TestId == 1 && result[i].GradeLevelEn == "Weak"))  //Standing Long Jump Test (in cm) (Muscular Strength)
+				if (result[i].TestId == 1 && result[i].GradeLevelEn == "Weak")  //Standing Long Jump Test (in cm) (Muscular Strength)
 				{
 					result[i].HowToEnhance = "1.Squat Jumps\n2.Broad Jumps\n3.Box Jumps (using a soft box or step)\n4.Lateral Bounds";
 					result[i].HowToEnhanceAr = "1.قفزات القرفصاء\n2.القفزات الأفقية (قفزات العرض)\n3.القفز على الصندوق (باستخدام صندوق ناعم أو درجة)\n4.القفزات الجانبية";
 				}
-				else if ((result[i].TestId == 2 && result[i].GradeLevelEn == "Weak")) //Sit-and-Reach Flexibility (in cm) (Muscular Endurance)
+				else if (result[i].TestId == 2 && result[i].GradeLevelEn == "Weak") //Sit-and-Reach Flexibility (in cm) (Muscular Endurance)
 				{
 					result[i].HowToEnhance = "1.Seated Forward Bend\n2.Butterfly Stretch\n3.Child's Pose\n4.Standing Forward Bend";
 					result[i].HowToEnhanceAr = "1.إطالة الجلوس للأمام\n2.تمرين الفراشة\n3.وضع الطفل\n4.إطالة الوقوف للأمام";
 				}
-				else if ((result[i].TestId == 3 && result[i].GradeLevelEn == "Weak"))  //One-Leg Stand (30 seconds) (Balance)
+				else if (result[i].TestId == 3 && result[i].GradeLevelEn == "Weak")  //One-Leg Stand (30 seconds) (Balance)
 				{
 					result[i].HowToEnhance = "1.One-Leg Balance Hold\n2.Toe Touch While Balancing\n3.Walking on a Line or Beam";
 					result[i].HowToEnhanceAr = "1.الوقوف على ساق واحدة مع الثبات\n2.لمس الأرض أثناء التوازن على ساق واحدة\n3.المشي على خط مستقيم أو عارضة توازن";
 				}
-				else if ((result[i].TestId == 4 && result[i].GradeLevelEn == "Weak")) //Sit-up Test (30 seconds) (Muscular Endurance)
+				else if (result[i].TestId == 4 && result[i].GradeLevelEn == "Weak") //Sit-up Test (30 seconds) (Muscular Endurance)
 				{
 					result[i].HowToEnhance = "1.Crunches\n2.Leg Raises\n3.Bicycle Crunches\n4.Plank";
 					result[i].HowToEnhanceAr = "1.تمرين التقلصات\n2.رفع الساقين\n3.تمرين الدراجة\n4.تمرين اللوح";
 				}
-				else if ((result[i].TestId == 5 && result[i].GradeLevelEn == "Weak")) //Medicine Ball Push (1 kg) from Standing Position (Muscular Strength)
+				else if (result[i].TestId == 5 && result[i].GradeLevelEn == "Weak") //Medicine Ball Push (1 kg) from Standing Position (Muscular Strength)
 				{
 					result[i].HowToEnhance = "1.Overhead Medicine Ball Throw\n2.Chest Pass with Medicine Ball\n3.Wall Slams with Medicine Ball\n4.Power Skips";
 					result[i].HowToEnhanceAr = "1.رمي الكرة الطبية فوق الرأس\n2.دفع الكرة من الصدر\n3.ضرب الكرة بالحائط\n4.التخطي القوي للأعلى";
 				}
-				else if ((result[i].TestId == 6 && result[i].GradeLevelEn == "Weak")) //Straight-Line Walking (3 meters) (Balance)
+				else if (result[i].TestId == 6 && result[i].GradeLevelEn == "Weak") //Straight-Line Walking (3 meters) (Balance)
 				{
 					result[i].HowToEnhance = "It could be there's a possibility of middle ear issues affecting balance\n1.Heel-to-Toe Walking\n2.Balance on One Leg\n3.Tightrope Walking with Arms Extended\n4.Side Steps on a Line";
 					result[i].HowToEnhanceAr = "يمكن ان تكون هناك مشاكل في الأذن الوسطى تؤثر على التوازن\n1.المشي بالكعب إلى الأصابع\n2.الوقوف على ساق واحدة\n3.المشي على \"حبل مشدود\" وهمي مع تمديد الذراعين\n4.خطوات جانبية على خط مستقيم";
 				}
-				else if ((result[i].TestId == 7 && result[i].GradeLevelEn == "Weak")) //30-Meter Sprint (in seconds) (Speed and Agility)
+				else if (result[i].TestId == 7 && result[i].GradeLevelEn == "Weak") //30-Meter Sprint (in seconds) (Speed and Agility)
 				{
 					result[i].HowToEnhance = "These exercises take into account that speed is largely influenced by genetics but can be enhanced with agility and coordination training\n1.High Knees\n2.Short Sprints with Acceleration\n3.Agility Ladder Drills\n4.Resisted Running with Parachute or Bands";
 					result[i].HowToEnhanceAr = "تأخذ هذه التمارين في الاعتبار أن السرعة تتأثر إلى حد كبير بالجينات ولكن يمكن تعزيزها من خلال تدريب المرونة والتنسيق\n1.رفع الركبتين عاليًا\n2.عدو قصير مع تسارع\n3.تمارين الرشاقة على السلم الأرضي\n4.العدو بالمقاومة باستخدام مظلة أو حبال";
 				}
-				else if ((result[i].TestId == 8 && result[i].GradeLevelEn == "Weak")) //15-Meter Zigzag Run (in seconds) (Speed and Agility)
+				else if (result[i].TestId == 8 && result[i].GradeLevelEn == "Weak") //15-Meter Zigzag Run (in seconds) (Speed and Agility)
 				{
 					result[i].HowToEnhance = "1.Cone Zigzag Drills\n2.Side Shuffles with Quick Turns\n3.T-Drill Agility Test\n4.Figure-8 Running Drill";
 					result[i].HowToEnhanceAr = "1.العدو بين الأقماع على شكل متعرج\n2.الخطوات الجانبية السريعة مع تغيير الاتجاه\n3.اختبار الرشاقة على شكل حرف T\n4.الركض على شكل الرقم 8 بين نقطتين";
