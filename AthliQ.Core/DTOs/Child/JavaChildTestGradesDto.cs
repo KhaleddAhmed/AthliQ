@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace AthliQ.Core.DTOs.Child
 {
     public class JavaChildTestGradesDto
     {
-        public string Name { get; set; }
-        public Dictionary<string, double> TestScores { get; set; }
+        public string TestNameEn { get; set; }
+        public string TestNameAr { get; set; }
+        public double TestValue { get; set; }
+        public string GradeLevel { get; set; }
+        public string GradeLevelAr { get; set; }
     }
 }

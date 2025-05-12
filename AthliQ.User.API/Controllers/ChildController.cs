@@ -49,7 +49,6 @@ namespace AthliQ.User.API.Controllers
         [Authorize(Roles = "User")]
         public async Task<ActionResult> ViewById(int childId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var child = await _childService.ViewChildAsync(childId);
             return Ok(child);
         }
