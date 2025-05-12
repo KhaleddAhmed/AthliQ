@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace AthliQ.Core.DTOs.Child
 {
-    public class TestGradesDto
-    {
-        public int TestId { get; set; }
-        public string TestName { get; set; }
-        public double Grade { get; set; }
-        public string Evaluation { get; set; }
-        public string EvaluationAr { get; set; }
+	public class TestGradesDto
+	{
+		public int TestId { get; set; }
+		public string TestNameEn { get; set; }
+		public string TestNameAr { get; set; }
+		public double TestValue { get; set; }
+		public string GradeLevelEn { get; set; }
+		public string GradeLevelAr { get; set; }
 
-        public string? HowToEnhance { get; set; }
-        public string? HowToEnhanceAr { get; set; }
-    }
+		public string? HowToEnhance { get; set; }
+		public string? HowToEnhanceAr { get; set; }
+	}
 }
