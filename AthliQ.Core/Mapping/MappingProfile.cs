@@ -29,7 +29,11 @@ namespace AthliQ.Core.Mapping
         private void MapUser()
         {
             CreateMap<RegisterDto, AthliQUser>();
-            CreateMap<AthliQUser, GetAllUserDto>();
+            CreateMap<AthliQUser, GetAllUserDto>()
+                .ForMember(
+                    d => d.FullName,
+                    o => o.MapFrom(src => src.FirstName + ' ' + src.LastName)
+                );
         }
 
         private void MapCategory()
