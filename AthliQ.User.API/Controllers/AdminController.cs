@@ -47,5 +47,13 @@ namespace AthliQ.User.API.Controllers
             var result = await _adminService.GetAllUsersAsync(pageIndex, pageSize);
             return Ok(result);
         }
+
+        [HttpGet("GetAllStats")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult> GetUsersStats()
+        {
+            var result = await _adminService.GetStatsAsync();
+            return Ok(result);
+        }
     }
 }
