@@ -17,5 +17,7 @@ namespace AthliQ.Core.Service.Contract
             int? pageIndex,
             int? pageSize
         );
+
+        Task<GenericResponse<StatsDto>> GetStatsAsync();
     }
 }
