@@ -146,7 +146,7 @@ namespace AthliQ.Service.Services.Admin
 
                 NumberOfUsersApprovedToday = await _unitOfWork
                     .Repository<AthliQUser, string>()
-                    .Get(U => U.IsAccepted == true && U.AcceptedDate == DateTime.Now)
+                    .Get(U => U.IsAccepted == true && U.AcceptedDate.Value.Day == DateTime.Now.Day)
                     .Result.CountAsync(),
             };
 
