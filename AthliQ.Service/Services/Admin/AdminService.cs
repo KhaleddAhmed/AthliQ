@@ -10,6 +10,7 @@ using AthliQ.Core.Responses;
 using AthliQ.Core.Service.Contract;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AthliQ.Service.Services.Admin
@@ -18,11 +19,17 @@ namespace AthliQ.Service.Services.Admin
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly UserManager<AthliQUser> _userManager;
 
-        public AdminService(IUnitOfWork unitOfWork, IMapper mapper)
+        public AdminService(
+            IUnitOfWork unitOfWork,
+            IMapper mapper,
+            UserManager<AthliQUser> userManager
+        )
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
         public async Task<GenericResponse<bool>> AcceptUserAsync(string userId)
@@ -116,13 +123,17 @@ namespace AthliQ.Service.Services.Admin
 
             genericResponse.StatusCode = StatusCodes.Status200OK;
             genericResponse.Message = "Success to retreive all users";
+            int count = 0;
+
             genericResponse.Data = new GetAllUsersToReturnDto
             {
                 GetAllUserDtos = mappedUsers,
                 Count = await _unitOfWork
                     .Repository<AthliQUser, string>()
                     .GetAllAsyncAsQueryable()
-                    .Result.CountAsync(),
+                    .Result.CountAsync(U =>
+                        U.Email != "Ahmed.Abbas@gmail.com" && U.IsDeleted != true
+                    ),
             };
 
             return genericResponse;
