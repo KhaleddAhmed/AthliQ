@@ -19,17 +19,11 @@ namespace AthliQ.Service.Services.Admin
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly UserManager<AthliQUser> _userManager;
 
-        public AdminService(
-            IUnitOfWork unitOfWork,
-            IMapper mapper,
-            UserManager<AthliQUser> userManager
-        )
+        public AdminService(IUnitOfWork unitOfWork, IMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _userManager = userManager;
         }
 
         public async Task<GenericResponse<bool>> AcceptUserAsync(string userId)
@@ -48,6 +42,7 @@ namespace AthliQ.Service.Services.Admin
             }
 
             user.IsAccepted = true;
+            user.AcceptedDate = DateTime.Now;
 
             _unitOfWork.Repository<AthliQUser, string>().Update(user);
             var returnedRows = await _unitOfWork.CompleteAsync();
@@ -135,6 +130,29 @@ namespace AthliQ.Service.Services.Admin
                         U.Email != "Ahmed.Abbas@gmail.com" && U.IsDeleted != true
                     ),
             };
+
+            return genericResponse;
+        }
+
+        public async Task<GenericResponse<StatsDto>> GetStatsAsync()
+        {
+            var genericResponse = new GenericResponse<StatsDto>();
+            var stats = new StatsDto()
+            {
+                NumberOfPendingUsers = await _unitOfWork
+                    .Repository<AthliQUser, string>()
+                    .Get(U => U.IsAccepted == false)
+                    .Result.CountAsync(),
+
+                NumberOfUsersApprovedToday = await _unitOfWork
+                    .Repository<AthliQUser, string>()
+                    .Get(U => U.IsAccepted == true && U.AcceptedDate == DateTime.Now)
+                    .Result.CountAsync(),
+            };
+
+            genericResponse.StatusCode = StatusCodes.Status200OK;
+            genericResponse.Message = "Sucess to retreive stats";
+            genericResponse.Data = stats;
 
             return genericResponse;
         }

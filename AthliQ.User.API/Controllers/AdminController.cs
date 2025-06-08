@@ -1,4 +1,5 @@
-﻿using AthliQ.Core.Service.Contract;
+﻿using AthliQ.Core.DTOs.User;
+using AthliQ.Core.Service.Contract;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
