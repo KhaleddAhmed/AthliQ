@@ -36,6 +36,9 @@ namespace AthliQ.User.API
             builder.Services.Configure<EmailSettings>(
                 builder.Configuration.GetSection("EmailSettings")
             );
+            builder.Services.Configure<SmtpMailSettings>(
+                builder.Configuration.GetSection("MailSettings")
+            );
             builder.Services.AddTransient<IEmailService, EmailService>();
 
             #endregion
