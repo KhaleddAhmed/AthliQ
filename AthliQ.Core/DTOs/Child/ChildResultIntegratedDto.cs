@@ -9,6 +9,7 @@ namespace AthliQ.Core.DTOs.Child
     public class ChildResultIntegratedDto
     {
         public string Category { get; set; }
+        public string CategoryAr { get; set; }
         public double Score { get; set; }
     }
 }

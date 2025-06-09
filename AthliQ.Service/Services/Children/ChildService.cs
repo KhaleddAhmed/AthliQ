@@ -393,6 +393,10 @@ namespace AthliQ.Service.Services.Children
 					.CategoryScores.Select(kvp => new ChildResultIntegratedDto
 					{
 						Category = kvp.Key,
+						CategoryAr = _unitOfWork.Repository<Category, int>()
+												.Get(c => c.Name == kvp.Key).Result
+												.Select(c => c.ArabicName)
+												.FirstOrDefault() ?? kvp.Key,
 						Score = kvp.Value,
 					})
 					.ToList();
@@ -401,6 +405,10 @@ namespace AthliQ.Service.Services.Children
 					.CategoryPercentages.Select(rp => new ChildResultWithPercentagesDto
 					{
 						Category = rp.Key,
+						CategoryAr = _unitOfWork.Repository<Category, int>()
+												.Get(c => c.Name == rp.Key).Result
+												.Select(c => c.ArabicName)
+												.FirstOrDefault() ?? rp.Key,
 						Percentage = rp.Value,
 					})
 					.ToList();
