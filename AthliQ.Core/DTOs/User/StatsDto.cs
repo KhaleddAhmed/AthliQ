@@ -10,5 +10,8 @@ namespace AthliQ.Core.DTOs.User
     {
         public int NumberOfPendingUsers { get; set; }
         public int NumberOfUsersApprovedToday { get; set; }
+        public int NumberOfTests { get; set; }
+        public int NumberOfCategories { get; set; }
+        public int NumberOfSports { get; set; }
     }
 }
