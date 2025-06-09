@@ -34,6 +34,7 @@ namespace AthliQ.Core.Mapping
                     d => d.FullName,
                     o => o.MapFrom(src => src.FirstName + ' ' + src.LastName)
                 );
+            CreateMap<AthliQUser , ViewUserProfileDto>();
         }
 
         private void MapCategory()

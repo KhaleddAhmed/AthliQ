@@ -27,5 +27,12 @@ namespace AthliQ.User.API.Controllers
             var result = await _userService.LoginAsync(loginDto);
             return Ok(result);
         }
+
+        [HttpGet("ViewProfile")]
+        public async Task<ActionResult> ViewProfile(string userId)
+        {
+            var result = await _userService.ViewProfile(userId);
+            return Ok(result);
+        }
     }
 }

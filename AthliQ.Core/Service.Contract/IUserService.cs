@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AthliQ.Core.DTOs.Auth;
+﻿using AthliQ.Core.DTOs.Auth;
+using AthliQ.Core.DTOs.User;
 using AthliQ.Core.Responses;
 
 namespace AthliQ.Core.Service.Contract
@@ -14,5 +10,7 @@ namespace AthliQ.Core.Service.Contract
         Task<GenericResponse<UserDto>> RegisterAsync(RegisterDto registerDto);
 
         Task<bool> CheckEmailExistAsync(string email);
+
+        Task<GenericResponse<ViewUserProfileDto>> ViewProfile(string userId);
     }
 }
