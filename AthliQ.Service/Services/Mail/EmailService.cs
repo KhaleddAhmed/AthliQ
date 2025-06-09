@@ -17,9 +17,12 @@ namespace AthliQ.Service.Services.Mail
     public class EmailService : IEmailService
     {
         private readonly IOptions<EmailSettings> _options;
-        private readonly SmtpMailSettings _emailSettings;
+        private readonly IOptions<SmtpMailSettings> _emailSettings;
 
-        public EmailService(IOptions<EmailSettings> options, SmtpMailSettings emailSettings)
+        public EmailService(
+            IOptions<EmailSettings> options,
+            IOptions<SmtpMailSettings> emailSettings
+        )
         {
             _options = options;
             _emailSettings = emailSettings;
@@ -58,19 +61,22 @@ namespace AthliQ.Service.Services.Mail
             try
             {
                 using var client = new System.Net.Mail.SmtpClient(
-                    _emailSettings.SmtpServer,
-                    _emailSettings.SmtpPort
+                    _emailSettings.Value.SmtpServer,
+                    _emailSettings.Value.SmtpPort
                 );
                 client.UseDefaultCredentials = false;
                 client.Credentials = new NetworkCredential(
-                    _emailSettings.Username,
-                    _emailSettings.Password
+                    _emailSettings.Value.Username,
+                    _emailSettings.Value.Password
                 );
-                client.EnableSsl = _emailSettings.EnableSsl;
+                client.EnableSsl = _emailSettings.Value.EnableSsl;
 
                 var message = new MailMessage
                 {
-                    From = new MailAddress(_emailSettings.FromEmail, _emailSettings.FromName),
+                    From = new MailAddress(
+                        _emailSettings.Value.FromEmail,
+                        _emailSettings.Value.FromName
+                    ),
                     Subject = $"Physical Evaluation Report for {childName}",
                     Body = CreateEmailBody(childName),
                     IsBodyHtml = true,
