@@ -55,10 +55,10 @@ namespace AthliQ.Service.Services.User
                 return genericResponse;
             }
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
-            if (user == null)
+            if (user is null)
             {
                 genericResponse.StatusCode = StatusCodes.Status400BadRequest;
-                genericResponse.Message = "User is not Exist";
+                genericResponse.Message = "User does not Exist";
 
                 return genericResponse;
             }
@@ -74,6 +74,14 @@ namespace AthliQ.Service.Services.User
 
                 return genericResponse;
             }
+
+            if(user.IsAccepted != true)
+            {
+                genericResponse.StatusCode= StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Admin didn't Accept Your Request Yet";
+                return genericResponse;
+            }
+
             UserDto userDto = new UserDto()
             {
                 UserName = user.UserName,
