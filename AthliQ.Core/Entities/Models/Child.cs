@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace AthliQ.Core.Entities.Models
 {
     public class Child : BaseEntity
@@ -22,7 +17,7 @@ namespace AthliQ.Core.Entities.Models
         #endregion
 
         #region Sports
-        public int SportHistoryId { get; set; }
+        public int? SportHistoryId { get; set; }
         public int ParentSportHistoryId { get; set; }
         public int SportPreferenceId { get; set; }
         #endregion
