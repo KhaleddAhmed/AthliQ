@@ -10,5 +10,11 @@ namespace AthliQ.Core.Service.Contract
     public interface IEmailService
     {
         public void SendEmail(Email email);
+        Task SendReportEmailAsync(
+            string toEmail,
+            string childName,
+            byte[] pdfReport,
+            byte[] chartImage
+        );
     }
 }
