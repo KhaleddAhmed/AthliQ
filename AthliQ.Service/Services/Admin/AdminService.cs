@@ -159,6 +159,18 @@ namespace AthliQ.Service.Services.Admin
                     .Repository<AthliQUser, string>()
                     .Get(U => U.IsAccepted == true && U.AcceptedDate.Value.Day == DateTime.Now.Day)
                     .Result.CountAsync(),
+                NumberOfTests = await _unitOfWork
+                    .Repository<Test, int>()
+                    .GetAllAsyncAsQueryable()
+                    .Result.CountAsync(),
+                NumberOfCategories = await _unitOfWork
+                    .Repository<Category, int>()
+                    .GetAllAsyncAsQueryable()
+                    .Result.CountAsync(),
+                NumberOfSports = await _unitOfWork
+                    .Repository<Sport, int>()
+                    .GetAllAsyncAsQueryable()
+                    .Result.CountAsync(),
             };
 
             genericResponse.StatusCode = StatusCodes.Status200OK;
