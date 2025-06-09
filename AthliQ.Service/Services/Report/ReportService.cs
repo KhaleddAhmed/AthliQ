@@ -22,102 +22,219 @@ namespace AthliQ.Service.Services.Report
             _logger = logger;
         }
 
-        public async Task<byte[]> GenerateChartImageAsync(ReturnedEvaluateChildDto data)
-        {
-            try
-            {
-                const int width = 800;
-                const int height = 600;
-                const int centerX = width / 2;
-                const int centerY = height / 2;
-                var radius = Math.Min(width, height) / 3;
+		public async Task<byte[]> GenerateChartImageAsync(ReturnedEvaluateChildDto data)
+		{
+			try
+			{
+				const int width = 900;
+				const int height = 700;
+				const int centerX = width / 2;
+				const int centerY = height / 2 + 30; // Offset down to make room for title
+				var radius = Math.Min(width, height) / 4;
 
-                using var surface = SKSurface.Create(new SKImageInfo(width, height));
-                var canvas = surface.Canvas;
-                canvas.Clear(SKColors.White);
+				using var surface = SKSurface.Create(new SKImageInfo(width, height));
+				var canvas = surface.Canvas;
+				canvas.Clear(SKColors.White);
 
-                // Calculate angles for pie chart
-                var totalScore = data.ChildResultIntegratedDto.Sum(x => x.Score);
-                var colors = new[]
-                {
-                    SKColors.Red,
-                    SKColors.Blue,
-                    SKColors.Green,
-                    SKColors.Orange,
-                    SKColors.Purple,
-                    SKColors.Brown,
-                    SKColors.Pink,
-                    SKColors.Gray,
-                };
+				// Calculate angles for pie chart
+				var totalScore = data.ChildResultIntegratedDto.Sum(x => x.Score);
 
-                float startAngle = 0;
-                var paint = new SKPaint { Style = SKPaintStyle.Fill, IsAntialias = true };
-                var textPaint = new SKPaint
-                {
-                    Color = SKColors.Black,
-                    TextSize = 16,
-                    IsAntialias = true,
-                    Typeface = SKTypeface.Default,
-                };
+				// Improved color palette
+				var colors = new[]
+				{
+			SKColor.Parse("#FF6B6B"), // Red
+            SKColor.Parse("#4ECDC4"), // Teal
+            SKColor.Parse("#45B7D1"), // Blue
+            SKColor.Parse("#96CEB4"), // Green
+            SKColor.Parse("#FFEAA7"), // Yellow
+            SKColor.Parse("#DDA0DD"), // Plum
+            SKColor.Parse("#98D8C8"), // Mint
+            SKColor.Parse("#F7DC6F"), // Light Gold
+        };
 
-                // Draw pie chart
-                for (int i = 0; i < data.ChildResultIntegratedDto.Count; i++)
-                {
-                    var item = data.ChildResultIntegratedDto[i];
-                    var sweepAngle = (float)(item.Score * 360.0 / totalScore);
+				float startAngle = -90; // Start from top
+				var paint = new SKPaint { Style = SKPaintStyle.Fill, IsAntialias = true };
 
-                    paint.Color = colors[i % colors.Length];
+				// Improved text styling
+				var labelPaint = new SKPaint
+				{
+					Color = SKColors.Black,
+					TextSize = 14,
+					IsAntialias = true,
+					Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Normal),
+				};
 
-                    var rect = new SKRect(
-                        centerX - radius,
-                        centerY - radius,
-                        centerX + radius,
-                        centerY + radius
-                    );
-                    canvas.DrawArc(rect, startAngle, sweepAngle, true, paint);
+				var percentagePaint = new SKPaint
+				{
+					Color = SKColors.Black,
+					TextSize = 12,
+					IsAntialias = true,
+					Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold),
+				};
 
-                    // Draw labels
-                    var labelAngle = (startAngle + sweepAngle / 2) * Math.PI / 180;
-                    var labelX = centerX + (radius + 30) * Math.Cos(labelAngle);
-                    var labelY = centerY + (radius + 30) * Math.Sin(labelAngle);
+				// Store slice information for better label positioning
+				var sliceInfo = new List<(string category, string percentage, float midAngle, SKColor color)>();
 
-                    var percentage =
-                        data.ChildResultWithPercentagesDtos.FirstOrDefault(p =>
-                            p.Category == item.Category
-                        )?.Percentage ?? "N/A";
+				// Draw pie chart and collect slice information
+				for (int i = 0; i < data.ChildResultIntegratedDto.Count; i++)
+				{
+					var item = data.ChildResultIntegratedDto[i];
+					var sweepAngle = (float)(item.Score * 360.0 / totalScore);
+					var color = colors[i % colors.Length];
+					paint.Color = color;
 
-                    canvas.DrawText(
-                        $"{item.Category}: {percentage}",
-                        (float)labelX,
-                        (float)labelY,
-                        textPaint
-                    );
+					var rect = new SKRect(
+						centerX - radius,
+						centerY - radius,
+						centerX + radius,
+						centerY + radius
+					);
 
-                    startAngle += sweepAngle;
-                }
+					canvas.DrawArc(rect, startAngle, sweepAngle, true, paint);
 
-                // Draw title
-                var titlePaint = new SKPaint
-                {
-                    Color = SKColors.Black,
-                    TextSize = 24,
-                    IsAntialias = true,
-                    Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold),
-                };
-                canvas.DrawText("Physical Attributes Distribution", centerX - 150, 50, titlePaint);
+					// Store slice info for label drawing
+					var midAngle = startAngle + sweepAngle / 2;
+					var percentage = data.ChildResultWithPercentagesDtos
+						.FirstOrDefault(p => p.Category == item.Category)?.Percentage ?? "N/A";
 
-                using var image = surface.Snapshot();
-                using var encoded = image.Encode(SKEncodedImageFormat.Png, 100);
-                return encoded.ToArray();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error generating chart image");
-                throw;
-            }
-        }
+					sliceInfo.Add((item.Category, percentage, midAngle, color));
+					startAngle += sweepAngle;
+				}
 
-        public async Task<byte[]> GeneratePdfReportAsync(
+				// Draw labels with better positioning and connection lines
+				foreach (var slice in sliceInfo)
+				{
+					var labelAngle = slice.midAngle * Math.PI / 180;
+
+					// Position for the end of the connection line
+					var lineEndX = centerX + (radius + 40) * Math.Cos(labelAngle);
+					var lineEndY = centerY + (radius + 40) * Math.Sin(labelAngle);
+
+					// Position for the label text (further out)
+					var labelDistance = radius + 80;
+					var labelX = centerX + labelDistance * Math.Cos(labelAngle);
+					var labelY = centerY + labelDistance * Math.Sin(labelAngle);
+
+					// Adjust label position based on quadrant to avoid overlap
+					var textBounds = new SKRect();
+					var labelText = $"{slice.category}: {slice.percentage}";
+					labelPaint.MeasureText(labelText, ref textBounds);
+
+					// Adjust horizontal positioning
+					if (labelX > centerX) // Right side
+					{
+						labelX += 10;
+					}
+					else // Left side
+					{
+						labelX -= textBounds.Width + 10;
+					}
+
+					// Adjust vertical positioning
+					if (labelY < centerY) // Top half
+					{
+						labelY -= 10;
+					}
+					else // Bottom half
+					{
+						labelY += 15;
+					}
+
+					// Draw connection line
+					var linePaint = new SKPaint
+					{
+						Color = SKColors.Gray,
+						StrokeWidth = 1,
+						Style = SKPaintStyle.Stroke,
+						IsAntialias = true
+					};
+
+					// Line from pie edge to label
+					var pieEdgeX = centerX + radius * Math.Cos(labelAngle);
+					var pieEdgeY = centerY + radius * Math.Sin(labelAngle);
+
+					canvas.DrawLine((float)pieEdgeX, (float)pieEdgeY,
+								   (float)lineEndX, (float)lineEndY, linePaint);
+					canvas.DrawLine((float)lineEndX, (float)lineEndY,
+								   (float)labelX, (float)labelY, linePaint);
+
+					// Draw label background for better readability
+					var bgRect = new SKRect(
+						(float)labelX - 5,
+						(float)labelY - textBounds.Height - 2,
+						(float)labelX + textBounds.Width + 5,
+						(float)labelY + 5
+					);
+
+					var bgPaint = new SKPaint
+					{
+						Color = SKColors.White.WithAlpha(230),
+						Style = SKPaintStyle.Fill,
+						IsAntialias = true
+					};
+
+					canvas.DrawRoundRect(bgRect, 3, 3, bgPaint);
+
+					// Draw border around label background
+					var borderPaint = new SKPaint
+					{
+						Color = slice.color.WithAlpha(100),
+						Style = SKPaintStyle.Stroke,
+						StrokeWidth = 1,
+						IsAntialias = true
+					};
+					canvas.DrawRoundRect(bgRect, 3, 3, borderPaint);
+
+					// Draw the label text
+					canvas.DrawText(labelText, (float)labelX, (float)labelY, labelPaint);
+				}
+
+				// Draw improved title
+				var titlePaint = new SKPaint
+				{
+					Color = SKColor.Parse("#2C3E50"),
+					TextSize = 28,
+					IsAntialias = true,
+					Typeface = SKTypeface.FromFamilyName("Arial", SKFontStyle.Bold),
+				};
+
+				var titleText = "Physical Attributes Distribution";
+				var titleBounds = new SKRect();
+				titlePaint.MeasureText(titleText, ref titleBounds);
+				var titleX = centerX - titleBounds.Width / 2;
+
+				canvas.DrawText(titleText, titleX, 40, titlePaint);
+
+				// Add a subtle shadow/border effect to the pie chart
+				var shadowPaint = new SKPaint
+				{
+					Color = SKColors.Black.WithAlpha(30),
+					Style = SKPaintStyle.Fill,
+					IsAntialias = true,
+					ImageFilter = SKImageFilter.CreateDropShadow(2, 2, 4, 4, SKColors.Black.WithAlpha(50))
+				};
+
+				var shadowRect = new SKRect(
+					centerX - radius - 2,
+					centerY - radius - 2,
+					centerX + radius + 2,
+					centerY + radius + 2
+				);
+
+				// Draw shadow circle behind the pie
+				canvas.DrawOval(shadowRect, shadowPaint);
+
+				using var image = surface.Snapshot();
+				using var encoded = image.Encode(SKEncodedImageFormat.Png, 100);
+				return encoded.ToArray();
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "Error generating chart image");
+				throw;
+			}
+		}
+		public async Task<byte[]> GeneratePdfReportAsync(
             ReturnedEvaluateChildDto data,
             string childName
         )
