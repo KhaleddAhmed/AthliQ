@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AthliQ.Core;
 using AthliQ.Core.DTOs.Auth;
+using AthliQ.Core.DTOs.User;
 using AthliQ.Core.Entities;
 using AthliQ.Core.Entities.Models;
 using AthliQ.Core.Responses;
@@ -12,6 +13,7 @@ using AthliQ.Core.Service.Contract;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace AthliQ.Service.Services.User
 {
@@ -161,5 +163,31 @@ namespace AthliQ.Service.Services.User
 
             return response;
         }
-    }
+
+		public async Task<GenericResponse<ViewUserProfileDto>> ViewProfile(string userId)
+		{
+			var genericResponse = new GenericResponse<ViewUserProfileDto>();
+            
+            var user = await _unitOfWork.Repository<AthliQUser , string>()
+                                        .Get(u => u.Id == userId).Result
+                                        .Include(u => u.Childs)
+                                        .FirstOrDefaultAsync();
+
+            if(user is null)
+            {
+                genericResponse.StatusCode = StatusCodes.Status404NotFound;
+                genericResponse.Message = "User Is Not Found";
+                return genericResponse;
+            }
+
+            var mappedUser = _mapper.Map<AthliQUser , ViewUserProfileDto>(user);
+            mappedUser.ChildrenCount = user.Childs.Count();
+
+			genericResponse.StatusCode = StatusCodes.Status200OK;
+            genericResponse.Message = "User Profile Retrieved Successfully";
+            genericResponse.Data = mappedUser;
+            
+            return genericResponse;
+		}
+	}
 }
