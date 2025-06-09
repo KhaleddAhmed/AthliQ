@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AthliQ.Core;
 using AthliQ.Core.DTOs.User;
 using AthliQ.Core.Entities;
+using AthliQ.Core.Entities.Models;
 using AthliQ.Core.Responses;
 using AthliQ.Core.Service.Contract;
 using AutoMapper;
@@ -19,11 +20,13 @@ namespace AthliQ.Service.Services.Admin
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IEmailService _emailService;
 
-        public AdminService(IUnitOfWork unitOfWork, IMapper mapper)
+        public AdminService(IUnitOfWork unitOfWork, IMapper mapper, IEmailService emailService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _emailService = emailService;
         }
 
         public async Task<GenericResponse<bool>> AcceptUserAsync(string userId)
@@ -46,7 +49,15 @@ namespace AthliQ.Service.Services.Admin
 
             _unitOfWork.Repository<AthliQUser, string>().Update(user);
             var returnedRows = await _unitOfWork.CompleteAsync();
+            var email = new Email()
+            {
+                To = user.Email,
+                Subject = "Your Email has been accepted",
+                Body =
+                    "AthliQ organization has approved your Registration Please Check The Application Again",
+            };
 
+            _emailService.SendEmail(email);
             if (returnedRows > 0)
             {
                 genericResponse.StatusCode = StatusCodes.Status200OK;
