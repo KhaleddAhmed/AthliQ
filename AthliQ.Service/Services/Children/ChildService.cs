@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using AthliQ.Core;
 using AthliQ.Core.DTOs.Child;
@@ -134,7 +135,35 @@ namespace AthliQ.Service.Services.Children
                 "Images"
             );
 
-            foreach (var testchild in createChildDto.CreateChildTestDtos)
+
+            var pythonImagecontent = await SendImagesToPythonApiAsync(createChildDto.FrontImage , createChildDto.SideImage);
+
+            if(pythonImagecontent is null)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Can Not get data from the Python Model";
+                return genericResponse;
+            }
+
+            var imageIntegratedResult = JsonSerializer.Deserialize<PythonChildImageResultDto>(pythonImagecontent , new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
+
+            if(imageIntegratedResult is null)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Failed to Deserialize the returned content";
+                return genericResponse;
+            }
+
+            if(imageIntegratedResult.Status != "success")
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = imageIntegratedResult.Status;
+                return genericResponse;
+            }
+
+            //
+
+			foreach (var testchild in createChildDto.CreateChildTestDtos)
             {
                 var test = await _unitOfWork.Repository<Test, int>().GetAsync(testchild.TestId);
                 if (test is null)
@@ -231,6 +260,7 @@ namespace AthliQ.Service.Services.Children
             var mappedChild = _mapper.Map<Child>(createChildDto);
             mappedChild.ImageFrontURL = createChildDto.FrontImageName;
             mappedChild.ImageSideURL = createChildDto.SideImageName;
+            mappedChild.IsNormalBodyImage = imageIntegratedResult.Result;
             mappedChild.AthliQUserId = userId;
             await _unitOfWork.Repository<Child, int>().AddAsync(mappedChild);
             var result = await _unitOfWork.CompleteAsync();
@@ -331,6 +361,13 @@ namespace AthliQ.Service.Services.Children
                 genericResponse.Message = "This Child is already Evaluated";
                 return genericResponse;
             }
+
+            if(child.IsNormalBodyImage == false)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Child has a Problem either in his/her Front or Side Body Posture";
+                return genericResponse;
+			}
 
             var preferedSports = await _unitOfWork
                 .Repository<Sport, int>()
@@ -942,7 +979,36 @@ namespace AthliQ.Service.Services.Children
             return genericResponse;
         }
 
-        private async Task<string> SendPlayerDataAsync(object player)
+
+
+		private async Task<string> SendImagesToPythonApiAsync(IFormFile frontImage, IFormFile sideImage)
+		{
+			using var form = new MultipartFormDataContent();
+
+			var frontContent = new StreamContent(frontImage.OpenReadStream());
+			frontContent.Headers.ContentType = new MediaTypeHeaderValue(frontImage.ContentType);
+			form.Add(frontContent, "front_image", frontImage.FileName);
+
+			var sideContent = new StreamContent(sideImage.OpenReadStream());
+			sideContent.Headers.ContentType = new MediaTypeHeaderValue(sideImage.ContentType);
+			form.Add(sideContent, "side_image", sideImage.FileName);
+
+			try
+			{
+				var response = await _httpClient.PostAsync($"{_configuration["Urls:ImageModelUrl"]}analyze", form);
+				response.EnsureSuccessStatusCode();
+
+				return await response.Content.ReadAsStringAsync();
+			}
+			catch (Exception ex)
+			{
+				return $"Error sending images to Python API: {ex.Message}";
+			}
+		}
+
+
+
+		private async Task<string> SendPlayerDataAsync(object player)
         {
             var jsonOptionsPolicy = new JsonSerializerOptions
             {

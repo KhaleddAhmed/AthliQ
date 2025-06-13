@@ -27,6 +27,8 @@ namespace AthliQ.Core.Entities.Models
         public double Weight { get; set; }
         public string ImageFrontURL { get; set; }
         public string ImageSideURL { get; set; }
+
+        public bool IsNormalBodyImage { get; set; }
         #endregion
 
         #region Relationships
