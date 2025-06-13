@@ -538,7 +538,15 @@ namespace AthliQ.Service.Services.Children
                 return genericResponse;
             }
 
-            if (!child.ChildTests.Any())
+			if (child.IsNormalBodyImage == false)
+			{
+				genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+				genericResponse.Message = "Child has a Problem either in his/her Front or Side Body Posture";
+				return genericResponse;
+			}
+
+
+			if (!child.ChildTests.Any())
             {
                 genericResponse.StatusCode = StatusCodes.Status400BadRequest;
                 genericResponse.Message = "Child doesn't have test values to get his/her Grades";
