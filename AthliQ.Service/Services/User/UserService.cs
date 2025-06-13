@@ -170,8 +170,9 @@ namespace AthliQ.Service.Services.User
             
             var user = await _unitOfWork.Repository<AthliQUser , string>()
                                         .Get(u => u.Id == userId && u.IsDeleted != true).Result
-                                        .Include(u => u.Childs)
+                                        .Include(u => u.Childs).ThenInclude(c =>c.ChildResults)
                                         .FirstOrDefaultAsync();
+            
 
             if(user is null)
             {
@@ -181,8 +182,7 @@ namespace AthliQ.Service.Services.User
             }
 
             var mappedUser = _mapper.Map<AthliQUser , ViewUserProfileDto>(user);
-            mappedUser.ChildrenCount = user.Childs.Count(c => c.IsDeleted != true);
-
+            mappedUser.ChildrenCount = user.Childs.Count(c => c.ChildResults != null && c.IsDeleted != true);
 			genericResponse.StatusCode = StatusCodes.Status200OK;
             genericResponse.Message = "User Profile Retrieved Successfully";
             genericResponse.Data = mappedUser;
