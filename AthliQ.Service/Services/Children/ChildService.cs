@@ -684,10 +684,6 @@ namespace AthliQ.Service.Services.Children
         {
             var genericResponse = new GenericResponse<GetAllChildWithTotalCountDto>();
             List<GetAllChildDto> getAllChildDtos = new List<GetAllChildDto>();
-            var totalCount = await _unitOfWork
-                .Repository<Child, int>()
-                .Get(c => c.AthliQUserId == userId && c.IsDeleted != true)
-                .Result.CountAsync();
             if (search is not null)
             {
                 var SearchedChildren = await _unitOfWork
@@ -736,7 +732,7 @@ namespace AthliQ.Service.Services.Children
                 }
                 var returnedSearchedData = new GetAllChildWithTotalCountDto()
                 {
-                    TotalCount = totalCount,
+                    TotalCount = getAllChildDtos.Count,
                     Children = getAllChildDtos,
                 };
 
@@ -750,8 +746,7 @@ namespace AthliQ.Service.Services.Children
             var allChildrenOfUser = await _unitOfWork
                 .Repository<Child, int>()
                 .Get(c => c.AthliQUserId == userId && c.IsDeleted != true)
-                .Result.Skip((pageIndex.Value - 1) * pageSize.Value)
-                .Take(pageSize.Value)
+                .Result
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
 
@@ -793,8 +788,8 @@ namespace AthliQ.Service.Services.Children
 
             var returnedData = new GetAllChildWithTotalCountDto()
             {
-                TotalCount = totalCount,
-                Children = getAllChildDtos,
+                TotalCount = getAllChildDtos.Count,
+                Children = getAllChildDtos.Skip((pageIndex.Value-1)*pageSize.Value).Take(pageSize.Value).ToList(),
             };
             genericResponse.StatusCode = StatusCodes.Status200OK;
             genericResponse.Message = "Success to retreive all children";
