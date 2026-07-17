@@ -8,6 +8,7 @@ using AthliQ.Service;
 using AthliQ.Service.Helpers;
 using AthliQ.Service.Services.Mail;
 using AthliQ.User.API.Extensions;
+using Hangfire;
 
 namespace AthliQ.User.API
 {
@@ -70,6 +71,8 @@ namespace AthliQ.User.API
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseCors("MyCors");
+
+            app.UseHangfireDashboard("/hangfire");
 
             app.MapControllers();
             #endregion

@@ -10,7 +10,6 @@ using AthliQ.Service.Helpers;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 
 namespace AthliQ.Service.Services.Children
@@ -19,23 +18,21 @@ namespace AthliQ.Service.Services.Children
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IReportGenerationService _reportGenerationService;
-        private readonly IEmailService _emailService;
         private readonly ICategoryEvaluationService _categoryEvaluationService;
         private readonly IBodyImageAnalysisService _bodyImageAnalysisService;
+        private readonly IChildReportJobScheduler _childReportJobScheduler;
 
-        public ChildService(IUnitOfWork unitOfWork, IMapper mapper, IReportGenerationService reportGenerationService, IEmailService emailService,
-                            ICategoryEvaluationService categoryEvaluationService, IBodyImageAnalysisService bodyImageAnalysisService)
+        public ChildService(IUnitOfWork unitOfWork, IMapper mapper,ICategoryEvaluationService categoryEvaluationService, 
+                            IBodyImageAnalysisService bodyImageAnalysisService, IChildReportJobScheduler childReportJobScheduler)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _reportGenerationService = reportGenerationService;
-            _emailService = emailService;
             _categoryEvaluationService = categoryEvaluationService;
             _bodyImageAnalysisService = bodyImageAnalysisService;
+            _childReportJobScheduler = childReportJobScheduler;
         }
 
-        public async Task<GenericResponse<CreationOfChildReturnDto>> CreateChildAsync(string userId,CreateChildDto createChildDto)
+        public async Task<GenericResponse<CreationOfChildReturnDto>> CreateChildAsync(string userId, CreateChildDto createChildDto)
         {
             var genericResponse = new GenericResponse<CreationOfChildReturnDto>();
 
@@ -365,6 +362,13 @@ namespace AthliQ.Service.Services.Children
                 .Include(s => s.Category)
                 .FirstOrDefaultAsync();
 
+            if (preferedSports is null)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Invalid Prefered Sport for the Child";
+                return genericResponse;
+            }
+
             var listOfPerferedCategory = new List<string>() { preferedSports.Category.Name };
 
             var parentSportsHistory = await _unitOfWork
@@ -373,12 +377,16 @@ namespace AthliQ.Service.Services.Children
                 .Include(s => s.Category)
                 .FirstOrDefaultAsync();
 
+            if (parentSportsHistory is null)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Invalid Parent Sports History for the Child";
+                return genericResponse;
+            }
+
             var listOfParentCategory = new List<string> { parentSportsHistory.Category.Name };
 
-            var listOfScores = child
-                .ChildTests.OrderBy(ct => ct.TestId)
-                .Select(ct => ct.TestResult)
-                .ToList();
+            var listOfScores = child.ChildTests.OrderBy(ct => ct.TestId).Select(ct => ct.TestResult).ToList();
 
             var ChildTosendDto = new ChildToSendDto()
             {
@@ -398,14 +406,10 @@ namespace AthliQ.Service.Services.Children
             var ChildResult = await _categoryEvaluationService.EvaluateChildAsync(ChildTosendDto);
             if (ChildResult != null)
             {
-                var jsonPolicy = new JsonSerializerOptions
+                var integrationResult = JsonSerializer.Deserialize<AllDataChildJavaDto>(ChildResult, new JsonSerializerOptions
                 {
                     PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                };
-                var integrationResult = JsonSerializer.Deserialize<AllDataChildJavaDto>(
-                    ChildResult,
-                    jsonPolicy
-                );
+                });
 
                 if (integrationResult is null)
                 {
@@ -423,33 +427,19 @@ namespace AthliQ.Service.Services.Children
                     return genericResponse;
                 }
 
-                var result = integrationResult
-                    .CategoryScores.Select(kvp => new ChildResultIntegratedDto
-                    {
-                        Category = kvp.Key,
-                        CategoryAr =
-                            _unitOfWork
-                                .Repository<Category, int>()
-                                .Get(c => c.Name == kvp.Key)
-                                .Select(c => c.ArabicName)
-                                .FirstOrDefault() ?? kvp.Key,
-                        Score = kvp.Value,
-                    })
-                    .ToList();
+                var result = integrationResult.CategoryScores.Select(kvp => new ChildResultIntegratedDto
+                {
+                    Category = kvp.Key,
+                    CategoryAr = _unitOfWork.Repository<Category, int>().Get(c => c.Name == kvp.Key).Select(c => c.ArabicName).FirstOrDefault() ?? kvp.Key,
+                    Score = kvp.Value,
+                }).ToList();
 
-                var resultWithPercentage = integrationResult
-                    .CategoryPercentages.Select(rp => new ChildResultWithPercentagesDto
-                    {
-                        Category = rp.Key,
-                        CategoryAr =
-                            _unitOfWork
-                                .Repository<Category, int>()
-                                .Get(c => c.Name == rp.Key)
-                                .Select(c => c.ArabicName)
-                                .FirstOrDefault() ?? rp.Key,
-                        Percentage = rp.Value,
-                    })
-                    .ToList();
+                var resultWithPercentage = integrationResult.CategoryPercentages.Select(rp => new ChildResultWithPercentagesDto
+                {
+                    Category = rp.Key,
+                    CategoryAr =_unitOfWork.Repository<Category, int>().Get(c => c.Name == rp.Key).Select(c => c.ArabicName).FirstOrDefault() ?? rp.Key,
+                    Percentage = rp.Value,
+                }).ToList();
 
                 var ResultCategoryOfTheChild = result.OrderByDescending(c => c.Score).ElementAt(0);
                 var childResultCategory = new ChildResult()
@@ -467,35 +457,21 @@ namespace AthliQ.Service.Services.Children
                 var resultOfCreationChildResult = await _unitOfWork.CompleteAsync();
                 if (resultOfCreationChildResult > 0)
                 {
-                    var sports = await _unitOfWork
-                        .Repository<Sport, int>()
-                        .Get(s => s.CategoryId == childResultCategory.CategoryId)
-                        .ToListAsync();
+                    var sports = await _unitOfWork.Repository<Sport, int>().Get(s => s.CategoryId == childResultCategory.CategoryId).ToListAsync();
                     var returnedEvaluatedData = new ReturnedEvaluateChildDto
                     {
                         ChildResultIntegratedDto = result,
-                        FinalResult =
-                            $"{child.Name}'s Best Category is {integrationResult.BestCategory}",
+                        FinalResult =$"{child.Name}'s Best Category is {integrationResult.BestCategory}",
                         ChildResultWithPercentagesDtos = resultWithPercentage,
                         MatchedSports = _mapper.Map<List<ResultedSportDto>>(sports),
                     };
+                    
                     genericResponse.StatusCode = StatusCodes.Status200OK;
                     genericResponse.Message = "Retreived Result succesfully";
                     genericResponse.Data = returnedEvaluatedData;
 
-                    var pdf = await _reportGenerationService.GeneratePdfReportAsync(
-                        returnedEvaluatedData,
-                        child.Name
-                    );
-                    var chart = await _reportGenerationService.GenerateChartImageAsync(
-                        returnedEvaluatedData
-                    );
-                    await _emailService.SendReportEmailAsync(
-                        child.AthliQUser.Email,
-                        child.Name,
-                        pdf,
-                        chart
-                    );
+                    _childReportJobScheduler.Enqueue(returnedEvaluatedData, child.Name, child.AthliQUser.Email);
+
                     return genericResponse;
                 }
 
