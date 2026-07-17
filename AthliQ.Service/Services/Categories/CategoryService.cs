@@ -46,7 +46,7 @@ namespace AthliQ.Service.Services.Categories
             //2.If the Model is not null , get the Category Name
             var category = await _unitOfWork.Repository<Category, int>()
                                             .Get(c => c.Name == createCategoryDto.Name)
-                                            .Result.FirstOrDefaultAsync();
+                                            .FirstOrDefaultAsync();
             //3.Check if the Category Exists
             if (category is not null)
             {
@@ -58,7 +58,7 @@ namespace AthliQ.Service.Services.Categories
 
 			var categoryAr = await _unitOfWork.Repository<Category, int>()
 										   .Get(c => c.ArabicName == createCategoryDto.ArabicName)
-										   .Result.FirstOrDefaultAsync();
+										   .FirstOrDefaultAsync();
 			
 			if (categoryAr is not null)
 			{
@@ -130,7 +130,7 @@ namespace AthliQ.Service.Services.Categories
 
             //1.Find the Category with Sports in DB
             var category = await _unitOfWork.Repository<Category, int>()
-                                            .Get(c => c.Id == id).Result
+                                            .Get(c => c.Id == id)
                                             .Include(c => c.Sports)
                                             .FirstOrDefaultAsync();
 
@@ -208,7 +208,7 @@ namespace AthliQ.Service.Services.Categories
             //If Not Null,
             //2.Find the category in DB
             var category = await _unitOfWork.Repository<Category, int>()
-                                            .Get(c => c.Id == updateCategoryDto.Id).Result
+                                            .Get(c => c.Id == updateCategoryDto.Id)
                                             .FirstOrDefaultAsync();
 
             //3.Check if the category is Null(Not Found)

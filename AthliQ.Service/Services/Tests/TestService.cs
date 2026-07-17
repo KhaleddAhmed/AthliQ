@@ -39,7 +39,7 @@ namespace AthliQ.Service.Services.Tests
             var test = await _unitOfWork
                 .Repository<Test, int>()
                 .Get(t => t.Name == createTestDto.Name || t.ArabicName == createTestDto.ArabicName)
-                .Result.FirstOrDefaultAsync();
+                .FirstOrDefaultAsync();
 
             var category = await _unitOfWork
                 .Repository<Category, int>()
@@ -128,7 +128,7 @@ namespace AthliQ.Service.Services.Tests
                 var Tests = await _unitOfWork
                     .Repository<Test, int>()
                     .Get(t => t.CategoryId == categoryId.Value)
-                    .Result.OrderBy(t => t.CreatedAt)
+                    .OrderBy(t => t.CreatedAt)
                     .ToListAsync();
 
                 var mappedTests = _mapper.Map<List<GetAllTestDto>>(Tests);
@@ -169,7 +169,7 @@ namespace AthliQ.Service.Services.Tests
             var test = await _unitOfWork
                 .Repository<Test, int>()
                 .Get(t => t.Id == id)
-                .Result.Include(t => t.Category)
+                .Include(t => t.Category)
                 .FirstOrDefaultAsync();
             if (test is null)
             {
@@ -200,7 +200,7 @@ namespace AthliQ.Service.Services.Tests
             var test = await _unitOfWork
                 .Repository<Test, int>()
                 .Get(t => t.Id == updateTestDto.Id)
-                .Result.Include(t => t.Category)
+                .Include(t => t.Category)
                 .FirstOrDefaultAsync();
             if (test is null)
             {

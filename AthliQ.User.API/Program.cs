@@ -1,6 +1,9 @@
 using AthliQ.Core.Mapping;
+using AthliQ.Core.Repository.Contract;
 using AthliQ.Core.Service.Contract;
 using AthliQ.Repository;
+using AthliQ.Repository.BodyImageAnalysis;
+using AthliQ.Repository.RuleEngine;
 using AthliQ.Service;
 using AthliQ.Service.Helpers;
 using AthliQ.Service.Services.Mail;
@@ -33,6 +36,7 @@ namespace AthliQ.User.API
 
             //JWT Services
             builder.Services.AddJWTServices(builder.Configuration);
+            
             builder.Services.Configure<EmailSettings>(
                 builder.Configuration.GetSection("EmailSettings")
             );
@@ -40,6 +44,12 @@ namespace AthliQ.User.API
                 builder.Configuration.GetSection("MailSettings")
             );
             builder.Services.AddTransient<IEmailService, EmailService>();
+
+            builder.Services.AddHttpClient<ICategoryEvaluationService, DroolsCategoryEvaluationService>();
+            builder.Services.Configure<CategoryEvaluationOptions>(builder.Configuration.GetSection("CategoryEvaluationSettings"));
+
+            builder.Services.Configure<BodyImageAnalysisOptions>(builder.Configuration.GetSection("BodyImageAnalysisSettings"));
+            builder.Services.AddHttpClient<IBodyImageAnalysisService, BodyImageAnalysisService>();
 
             #endregion
 

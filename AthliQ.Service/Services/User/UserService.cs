@@ -169,7 +169,7 @@ namespace AthliQ.Service.Services.User
 			var genericResponse = new GenericResponse<ViewUserProfileDto>();
             
             var user = await _unitOfWork.Repository<AthliQUser , string>()
-                                        .Get(u => u.Id == userId && u.IsDeleted != true).Result
+                                        .Get(u => u.Id == userId && u.IsDeleted != true)
                                         .Include(u => u.Childs)
                                         .FirstOrDefaultAsync();
 
@@ -187,7 +187,7 @@ namespace AthliQ.Service.Services.User
             {
              if(child.IsDeleted!=true)
                 {
-					var childResult = await _unitOfWork.Repository<ChildResult, int>().Get(cr => cr.ChildId == child.Id).Result.FirstOrDefaultAsync();
+					var childResult = await _unitOfWork.Repository<ChildResult, int>().Get(cr => cr.ChildId == child.Id).FirstOrDefaultAsync();
 
 					if (childResult != null)
 						listOfChildCategory.Add(childResult);

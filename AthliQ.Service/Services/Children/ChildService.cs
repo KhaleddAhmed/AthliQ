@@ -1,11 +1,9 @@
-﻿using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
-using AthliQ.Core;
+﻿using AthliQ.Core;
 using AthliQ.Core.DTOs.Child;
 using AthliQ.Core.DTOs.Sport;
 using AthliQ.Core.DTOs.Test;
 using AthliQ.Core.Entities.Models;
+using AthliQ.Core.Repository.Contract;
 using AthliQ.Core.Responses;
 using AthliQ.Core.Service.Contract;
 using AthliQ.Service.Helpers;
@@ -13,6 +11,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json;
 
 namespace AthliQ.Service.Services.Children
 {
@@ -20,32 +19,23 @@ namespace AthliQ.Service.Services.Children
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly HttpClient _httpClient;
-        private readonly IConfiguration _configuration;
         private readonly IReportGenerationService _reportGenerationService;
         private readonly IEmailService _emailService;
+        private readonly ICategoryEvaluationService _categoryEvaluationService;
+        private readonly IBodyImageAnalysisService _bodyImageAnalysisService;
 
-        public ChildService(
-            IUnitOfWork unitOfWork,
-            IMapper mapper,
-            HttpClient httpClient,
-            IConfiguration configuration,
-            IReportGenerationService reportGenerationService,
-            IEmailService emailService
-        )
+        public ChildService(IUnitOfWork unitOfWork, IMapper mapper, IReportGenerationService reportGenerationService, IEmailService emailService,
+                            ICategoryEvaluationService categoryEvaluationService, IBodyImageAnalysisService bodyImageAnalysisService)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
-            _httpClient = httpClient;
-            _configuration = configuration;
             _reportGenerationService = reportGenerationService;
             _emailService = emailService;
+            _categoryEvaluationService = categoryEvaluationService;
+            _bodyImageAnalysisService = bodyImageAnalysisService;
         }
 
-        public async Task<GenericResponse<CreationOfChildReturnDto>> CreateChildAsync(
-            string userId,
-            CreateChildDto createChildDto
-        )
+        public async Task<GenericResponse<CreationOfChildReturnDto>> CreateChildAsync(string userId,CreateChildDto createChildDto)
         {
             var genericResponse = new GenericResponse<CreationOfChildReturnDto>();
 
@@ -136,25 +126,25 @@ namespace AthliQ.Service.Services.Children
             );
 
 
-            var pythonImagecontent = await SendImagesToPythonApiAsync(createChildDto.FrontImage , createChildDto.SideImage);
+            var pythonImagecontent = await _bodyImageAnalysisService.AnalyzeBodyImagesAsync(createChildDto.FrontImage, createChildDto.SideImage);
 
-            if(pythonImagecontent is null)
+            if (pythonImagecontent is null)
             {
                 genericResponse.StatusCode = StatusCodes.Status400BadRequest;
                 genericResponse.Message = "Can Not get data from the Python Model";
                 return genericResponse;
             }
 
-            var imageIntegratedResult = JsonSerializer.Deserialize<PythonChildImageResultDto>(pythonImagecontent , new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase});
+            var imageIntegratedResult = JsonSerializer.Deserialize<PythonChildImageResultDto>(pythonImagecontent, new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
-            if(imageIntegratedResult is null)
+            if (imageIntegratedResult is null)
             {
                 genericResponse.StatusCode = StatusCodes.Status400BadRequest;
                 genericResponse.Message = "Failed to Deserialize the returned content";
                 return genericResponse;
             }
 
-            if(imageIntegratedResult.Status != "success")
+            if (imageIntegratedResult.Status != "success")
             {
                 genericResponse.StatusCode = StatusCodes.Status400BadRequest;
                 genericResponse.Message = imageIntegratedResult.Status;
@@ -163,7 +153,7 @@ namespace AthliQ.Service.Services.Children
 
             //
 
-			foreach (var testchild in createChildDto.CreateChildTestDtos)
+            foreach (var testchild in createChildDto.CreateChildTestDtos)
             {
                 var test = await _unitOfWork.Repository<Test, int>().GetAsync(testchild.TestId);
                 if (test is null)
@@ -305,7 +295,7 @@ namespace AthliQ.Service.Services.Children
             var child = await _unitOfWork
                 .Repository<Child, int>()
                 .Get(c => c.Id == childId && c.AthliQUserId == userId)
-                .Result.FirstOrDefaultAsync();
+                .FirstOrDefaultAsync();
             if (child is null)
             {
                 genericResponse.StatusCode = StatusCodes.Status400BadRequest;
@@ -342,7 +332,7 @@ namespace AthliQ.Service.Services.Children
             var child = await _unitOfWork
                 .Repository<Child, int>()
                 .Get(c => c.Id == childId && c.IsDeleted != true)
-                .Result.Include(c => c.ChildTests)
+                .Include(c => c.ChildTests)
                 .Include(c => c.ChildResults)
                 .Include(c => c.AthliQUser)
                 .FirstOrDefaultAsync();
@@ -362,17 +352,17 @@ namespace AthliQ.Service.Services.Children
                 return genericResponse;
             }
 
-            if(child.IsNormalBodyImage == false)
+            if (child.IsNormalBodyImage == false)
             {
                 genericResponse.StatusCode = StatusCodes.Status400BadRequest;
                 genericResponse.Message = "Child has a Problem either in his/her Front or Side Body Posture";
                 return genericResponse;
-			}
+            }
 
             var preferedSports = await _unitOfWork
                 .Repository<Sport, int>()
                 .Get(s => s.Id == child.SportPreferenceId)
-                .Result.Include(s => s.Category)
+                .Include(s => s.Category)
                 .FirstOrDefaultAsync();
 
             var listOfPerferedCategory = new List<string>() { preferedSports.Category.Name };
@@ -380,7 +370,7 @@ namespace AthliQ.Service.Services.Children
             var parentSportsHistory = await _unitOfWork
                 .Repository<Sport, int>()
                 .Get(s => s.Id == child.ParentSportHistoryId)
-                .Result.Include(s => s.Category)
+                .Include(s => s.Category)
                 .FirstOrDefaultAsync();
 
             var listOfParentCategory = new List<string> { parentSportsHistory.Category.Name };
@@ -405,7 +395,7 @@ namespace AthliQ.Service.Services.Children
                 TestScores = listOfScores,
             };
 
-            var ChildResult = await SendPlayerDataAsync(ChildTosendDto);
+            var ChildResult = await _categoryEvaluationService.EvaluateChildAsync(ChildTosendDto);
             if (ChildResult != null)
             {
                 var jsonPolicy = new JsonSerializerOptions
@@ -441,7 +431,7 @@ namespace AthliQ.Service.Services.Children
                             _unitOfWork
                                 .Repository<Category, int>()
                                 .Get(c => c.Name == kvp.Key)
-                                .Result.Select(c => c.ArabicName)
+                                .Select(c => c.ArabicName)
                                 .FirstOrDefault() ?? kvp.Key,
                         Score = kvp.Value,
                     })
@@ -455,7 +445,7 @@ namespace AthliQ.Service.Services.Children
                             _unitOfWork
                                 .Repository<Category, int>()
                                 .Get(c => c.Name == rp.Key)
-                                .Result.Select(c => c.ArabicName)
+                                .Select(c => c.ArabicName)
                                 .FirstOrDefault() ?? rp.Key,
                         Percentage = rp.Value,
                     })
@@ -468,7 +458,7 @@ namespace AthliQ.Service.Services.Children
                     CategoryId = await _unitOfWork
                         .Repository<Category, int>()
                         .Get(c => c.Name == ResultCategoryOfTheChild.Category)
-                        .Result.Select(c => c.Id)
+                        .Select(c => c.Id)
                         .FirstOrDefaultAsync(),
                     ResultDate = DateTime.Now,
                 };
@@ -480,7 +470,7 @@ namespace AthliQ.Service.Services.Children
                     var sports = await _unitOfWork
                         .Repository<Sport, int>()
                         .Get(s => s.CategoryId == childResultCategory.CategoryId)
-                        .Result.ToListAsync();
+                        .ToListAsync();
                     var returnedEvaluatedData = new ReturnedEvaluateChildDto
                     {
                         ChildResultIntegratedDto = result,
@@ -528,7 +518,7 @@ namespace AthliQ.Service.Services.Children
             var child = await _unitOfWork
                 .Repository<Child, int>()
                 .Get(c => c.Id == childId)
-                .Result.Include(c => c.ChildTests)
+                .Include(c => c.ChildTests)
                 .FirstOrDefaultAsync();
             if (child is null)
             {
@@ -538,15 +528,15 @@ namespace AthliQ.Service.Services.Children
                 return genericResponse;
             }
 
-			if (child.IsNormalBodyImage == false)
-			{
-				genericResponse.StatusCode = StatusCodes.Status400BadRequest;
-				genericResponse.Message = "Child has a Problem either in his/her Front or Side Body Posture";
-				return genericResponse;
-			}
+            if (child.IsNormalBodyImage == false)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Child has a Problem either in his/her Front or Side Body Posture";
+                return genericResponse;
+            }
 
 
-			if (!child.ChildTests.Any())
+            if (!child.ChildTests.Any())
             {
                 genericResponse.StatusCode = StatusCodes.Status400BadRequest;
                 genericResponse.Message = "Child doesn't have test values to get his/her Grades";
@@ -565,7 +555,7 @@ namespace AthliQ.Service.Services.Children
                 TestScores = listOfScores,
             };
 
-            var ChildResult = await SendPlayerDataToGetGradesAsync(childToSendDto);
+            var ChildResult = await _categoryEvaluationService.EvaluateTestGradesAsync(childToSendDto);
             if (ChildResult is null)
             {
                 genericResponse.StatusCode = StatusCodes.Status400BadRequest;
@@ -693,7 +683,7 @@ namespace AthliQ.Service.Services.Children
                         && c.Name.ToLower().Contains(search.ToLower())
                         && c.IsDeleted != true
                     )
-                    .Result.ToListAsync();
+                    .ToListAsync();
 
                 if (SearchedChildren.Count == 0)
                 {
@@ -710,7 +700,7 @@ namespace AthliQ.Service.Services.Children
                     var childCategory = await _unitOfWork
                         .Repository<ChildResult, int>()
                         .Get(cr => cr.ChildId == child.Id)
-                        .Result.FirstOrDefaultAsync();
+                        .FirstOrDefaultAsync();
                     if (childCategory is null)
                         child.Category = null;
                     else
@@ -746,7 +736,6 @@ namespace AthliQ.Service.Services.Children
             var allChildrenOfUser = await _unitOfWork
                 .Repository<Child, int>()
                 .Get(c => c.AthliQUserId == userId && c.IsDeleted != true)
-                .Result
                 .OrderByDescending(c => c.CreatedAt)
                 .ToListAsync();
 
@@ -765,7 +754,7 @@ namespace AthliQ.Service.Services.Children
                 var childCategory = await _unitOfWork
                     .Repository<ChildResult, int>()
                     .Get(cr => cr.ChildId == child.Id)
-                    .Result.FirstOrDefaultAsync();
+                    .FirstOrDefaultAsync();
                 if (childCategory is null)
                     child.Category = null;
                 else
@@ -789,7 +778,7 @@ namespace AthliQ.Service.Services.Children
             var returnedData = new GetAllChildWithTotalCountDto()
             {
                 TotalCount = getAllChildDtos.Count,
-                Children = getAllChildDtos.Skip((pageIndex.Value-1)*pageSize.Value).Take(pageSize.Value).ToList(),
+                Children = getAllChildDtos.Skip((pageIndex.Value - 1) * pageSize.Value).Take(pageSize.Value).ToList(),
             };
             genericResponse.StatusCode = StatusCodes.Status200OK;
             genericResponse.Message = "Success to retreive all children";
@@ -805,7 +794,7 @@ namespace AthliQ.Service.Services.Children
             var child = await _unitOfWork
                 .Repository<Child, int>()
                 .Get(c => c.Id == childId && c.IsDeleted == false)
-                .Result.Include(c => c.ChildTests)
+                .Include(c => c.ChildTests)
                 .Include(c => c.ChildResults)
                 .FirstOrDefaultAsync();
 
@@ -823,7 +812,7 @@ namespace AthliQ.Service.Services.Children
             var preferedSport = await _unitOfWork
                 .Repository<Sport, int>()
                 .Get(s => s.Id == child.SportPreferenceId)
-                .Result.Select(s => s.Name)
+                .Select(s => s.Name)
                 .FirstOrDefaultAsync();
             if (preferedSport is null)
             {
@@ -835,7 +824,7 @@ namespace AthliQ.Service.Services.Children
             var preferedSportAr = await _unitOfWork
                 .Repository<Sport, int>()
                 .Get(s => s.Id == child.SportPreferenceId)
-                .Result.Select(s => s.ArabicName)
+                .Select(s => s.ArabicName)
                 .FirstOrDefaultAsync();
             if (preferedSportAr is null)
             {
@@ -847,7 +836,7 @@ namespace AthliQ.Service.Services.Children
             var parentSportHistory = await _unitOfWork
                 .Repository<Sport, int>()
                 .Get(s => s.Id == child.ParentSportHistoryId)
-                .Result.Select(s => s.Name)
+                .Select(s => s.Name)
                 .FirstOrDefaultAsync();
             if (parentSportHistory is null)
             {
@@ -859,7 +848,7 @@ namespace AthliQ.Service.Services.Children
             var parentSportHistoryAr = await _unitOfWork
                 .Repository<Sport, int>()
                 .Get(s => s.Id == child.ParentSportHistoryId)
-                .Result.Select(s => s.ArabicName)
+                .Select(s => s.ArabicName)
                 .FirstOrDefaultAsync();
             if (parentSportHistoryAr is null)
             {
@@ -872,7 +861,7 @@ namespace AthliQ.Service.Services.Children
             var childTests = await _unitOfWork
                 .Repository<ChildTest, int>()
                 .Get(ct => ct.ChildId == child.Id)
-                .Result.ToListAsync();
+                .ToListAsync();
 
             var testWithValueList = new List<TestWithValueDto>();
 
@@ -883,7 +872,7 @@ namespace AthliQ.Service.Services.Children
                     var test = await _unitOfWork
                         .Repository<Test, int>()
                         .Get(t => t.Id == childTest.TestId)
-                        .Result.FirstOrDefaultAsync();
+                        .FirstOrDefaultAsync();
                     if (test is null)
                     {
                         genericResponse.StatusCode = StatusCodes.Status200OK;
@@ -906,7 +895,7 @@ namespace AthliQ.Service.Services.Children
             var childResult = await _unitOfWork
                 .Repository<ChildResult, int>()
                 .Get(cr => cr.ChildId == child.Id)
-                .Result.FirstOrDefaultAsync();
+                .FirstOrDefaultAsync();
             if (childResult is null)
             {
                 genericResponse.StatusCode = StatusCodes.Status404NotFound;
@@ -917,7 +906,7 @@ namespace AthliQ.Service.Services.Children
             var category = await _unitOfWork
                 .Repository<Category, int>()
                 .Get(c => c.Id == childResult.CategoryId)
-                .Result.Select(c => c.Name)
+                .Select(c => c.Name)
                 .FirstOrDefaultAsync();
 
             if (category is null)
@@ -930,7 +919,7 @@ namespace AthliQ.Service.Services.Children
             var categoryAr = await _unitOfWork
                 .Repository<Category, int>()
                 .Get(c => c.Id == childResult.CategoryId)
-                .Result.Select(c => c.ArabicName)
+                .Select(c => c.ArabicName)
                 .FirstOrDefaultAsync();
 
             if (categoryAr is null)
@@ -943,7 +932,7 @@ namespace AthliQ.Service.Services.Children
             var sports = await _unitOfWork
                 .Repository<Sport, int>()
                 .Get(s => s.CategoryId == childResult.CategoryId)
-                .Result.Select(s => s.Name)
+                .Select(s => s.Name)
                 .ToListAsync();
             if (!sports.Any())
             {
@@ -955,7 +944,7 @@ namespace AthliQ.Service.Services.Children
             var sportsAr = await _unitOfWork
                 .Repository<Sport, int>()
                 .Get(s => s.CategoryId == childResult.CategoryId)
-                .Result.Select(s => s.ArabicName)
+                .Select(s => s.ArabicName)
                 .ToListAsync();
             if (!sportsAr.Any())
             {
@@ -980,90 +969,6 @@ namespace AthliQ.Service.Services.Children
             genericResponse.Data = returnedChild;
 
             return genericResponse;
-        }
-
-
-
-		private async Task<string> SendImagesToPythonApiAsync(IFormFile frontImage, IFormFile sideImage)
-		{
-			using var form = new MultipartFormDataContent();
-
-			var frontContent = new StreamContent(frontImage.OpenReadStream());
-			frontContent.Headers.ContentType = new MediaTypeHeaderValue(frontImage.ContentType);
-			form.Add(frontContent, "front_image", frontImage.FileName);
-
-			var sideContent = new StreamContent(sideImage.OpenReadStream());
-			sideContent.Headers.ContentType = new MediaTypeHeaderValue(sideImage.ContentType);
-			form.Add(sideContent, "side_image", sideImage.FileName);
-
-			try
-			{
-				var response = await _httpClient.PostAsync($"{_configuration["Urls:ImageModelUrl"]}analyze", form);
-				response.EnsureSuccessStatusCode();
-
-				return await response.Content.ReadAsStringAsync();
-			}
-			catch (Exception ex)
-			{
-				return $"Error sending images to Python API: {ex.Message}";
-			}
-		}
-
-
-
-		private async Task<string> SendPlayerDataAsync(object player)
-        {
-            var jsonOptionsPolicy = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            };
-            var json = JsonSerializer.Serialize(player, jsonOptionsPolicy);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            try
-            {
-                var response = await _httpClient.PostAsync(
-                    $"{_configuration["DroolsUrl"]}/player/categorize",
-                    content
-                );
-                response.EnsureSuccessStatusCode();
-
-                return await response.Content.ReadAsStringAsync();
-            }
-            catch (Exception ex)
-            {
-                return $" Error sending data to Drools API: {ex.Message}";
-            }
-        }
-
-        private async Task<string> SendPlayerDataToGetGradesAsync(object player)
-        {
-            var jsonOptionsPolicy = new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            };
-            var json = JsonSerializer.Serialize(player, jsonOptionsPolicy);
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            try
-            {
-                var response = await _httpClient.PostAsync(
-                    $"{_configuration["DroolsUrl"]}/player/tests",
-                    content
-                );
-                if (!response.IsSuccessStatusCode)
-                {
-                    return $"{response.RequestMessage}-{response.Headers}";
-                }
-
-                response.EnsureSuccessStatusCode();
-
-                return await response.Content.ReadAsStringAsync();
-            }
-            catch (Exception ex)
-            {
-                return $" Error sending data to Drools API: {ex.Message}";
-            }
         }
     }
 }
