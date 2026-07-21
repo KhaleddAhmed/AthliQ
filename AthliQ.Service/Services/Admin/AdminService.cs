@@ -115,7 +115,7 @@ namespace AthliQ.Service.Services.Admin
             var users = await _unitOfWork
                 .Repository<AthliQUser, string>()
                 .Get(U => U.IsDeleted != true && U.Email != "Admin.Support@gmail.com")
-                .Result.Skip((pageIndex.Value - 1) * pageSize.Value)
+                .Skip((pageIndex.Value - 1) * pageSize.Value)
                 .Take(pageSize.Value)
                 .ToListAsync();
             if (!users.Any())
