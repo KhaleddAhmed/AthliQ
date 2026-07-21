@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using AthliQ.Core.Entities.Models;
+﻿using System.Linq.Expressions;
 
 namespace AthliQ.Core.Repository.Contract
 {
@@ -15,8 +9,7 @@ namespace AthliQ.Core.Repository.Contract
         Task<T?> GetAsync(TKey id);
         Task AddAsync(T entity);
         Task<IQueryable<T>> GetAllAsyncAsQueryable();
-        Task<IQueryable<T>> Get(Expression<Func<T, bool>> predict = null);
-
+        IQueryable<T> Get(Expression<Func<T, bool>> predict = null);
         void Update(T entity);
         void Delete(T entity);
     }

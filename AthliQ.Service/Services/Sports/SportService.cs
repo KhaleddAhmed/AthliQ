@@ -39,7 +39,7 @@ namespace AthliQ.Service.Services.Sports
             //If Not Null,
             //2.Find the passed Sport Name (To Check if it's already exists)
             var sport = await _unitOfWork.Repository<Sport, int>()
-                                         .Get(s => s.Name == createSportDto.Name || s.ArabicName == createSportDto.ArabicName).Result
+                                         .Get(s => s.Name == createSportDto.Name || s.ArabicName == createSportDto.ArabicName)
                                          .FirstOrDefaultAsync();
 
             //3.Check if Not Null (Exists)
@@ -149,7 +149,7 @@ namespace AthliQ.Service.Services.Sports
                 //If Not Null (Found),
                 //4.Find All the Sports of this Category in DB
                 var sports = await _unitOfWork.Repository<Sport, int>()
-                                              .Get(s => s.CategoryId == categoryId.Value).Result
+                                              .Get(s => s.CategoryId == categoryId.Value)
                                               .ToListAsync();
                 //5.Check if Not Null(Found)
                 if (sports?.Count > 0)
@@ -200,7 +200,7 @@ namespace AthliQ.Service.Services.Sports
 
             //1.Find the Sport With its Category in DB
             var sport = await _unitOfWork.Repository<Sport, int>()
-                                         .Get(s => s.Id == id).Result
+                                         .Get(s => s.Id == id)
                                          .Include(s => s.Category)
                                          .FirstOrDefaultAsync();
 
@@ -239,7 +239,7 @@ namespace AthliQ.Service.Services.Sports
             //If Not Null,
             //3.Find the sport with category in DB
             var sport = await _unitOfWork.Repository<Sport, int>()
-                                         .Get(s => s.Id == updateSportDto.Id).Result
+                                         .Get(s => s.Id == updateSportDto.Id)
                                          .Include(s => s.Category)
                                          .FirstOrDefaultAsync();
 
