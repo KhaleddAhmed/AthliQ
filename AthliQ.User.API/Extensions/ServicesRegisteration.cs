@@ -13,7 +13,7 @@ namespace AthliQ.User.API.Extensions
 	{
 		public static IServiceCollection AddWebApplicationServices(this IServiceCollection Services)
 		{
-			Services.AddHttpClient<IChildService, ChildService>();
+			//Services.AddHttpClient<IChildService, ChildService>();
 
 			Services.AddIdentity<AthliQUser, IdentityRole>()
 							.AddEntityFrameworkStores<AthliQDbContext>();

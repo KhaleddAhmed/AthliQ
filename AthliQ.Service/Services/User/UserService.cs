@@ -169,9 +169,33 @@ namespace AthliQ.Service.Services.User
 			var genericResponse = new GenericResponse<ViewUserProfileDto>();
             
             var user = await _unitOfWork.Repository<AthliQUser , string>()
-                                        .Get(u => u.Id == userId && u.IsDeleted != true).Result
+                                        .Get(u => u.Id == userId && u.IsDeleted != true)
                                         .Include(u => u.Childs)
                                         .FirstOrDefaultAsync();
+
+            if(user is null)
+            {
+                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                genericResponse.Message = "Invalid User to view Profile";
+
+                return genericResponse;
+            }
+
+            var listOfChildCategory = new List<ChildResult>();
+
+            foreach(var child in user.Childs)
+            {
+             if(child.IsDeleted!=true)
+                {
+					var childResult = await _unitOfWork.Repository<ChildResult, int>().Get(cr => cr.ChildId == child.Id).FirstOrDefaultAsync();
+
+					if (childResult != null)
+						listOfChildCategory.Add(childResult);
+				}
+
+            }
+          
+            
 
             if(user is null)
             {
@@ -181,8 +205,7 @@ namespace AthliQ.Service.Services.User
             }
 
             var mappedUser = _mapper.Map<AthliQUser , ViewUserProfileDto>(user);
-            mappedUser.ChildrenCount = user.Childs.Count(c => c.IsDeleted != true);
-
+            mappedUser.ChildrenCount = listOfChildCategory.Count;
 			genericResponse.StatusCode = StatusCodes.Status200OK;
             genericResponse.Message = "User Profile Retrieved Successfully";
             genericResponse.Data = mappedUser;

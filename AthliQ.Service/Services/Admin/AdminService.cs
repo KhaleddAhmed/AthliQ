@@ -36,7 +36,7 @@ namespace AthliQ.Service.Services.Admin
             var user = await _unitOfWork
                 .Repository<AthliQUser, string>()
                 .Get(u => u.Id == userId)
-                .Result.FirstOrDefaultAsync();
+                .FirstOrDefaultAsync();
             if (user is null)
             {
                 genericResponse.StatusCode = StatusCodes.Status400BadRequest;
@@ -79,7 +79,7 @@ namespace AthliQ.Service.Services.Admin
             var user = await _unitOfWork
                 .Repository<AthliQUser, string>()
                 .Get(u => u.Id == userId)
-                .Result.FirstOrDefaultAsync();
+                .FirstOrDefaultAsync();
             if (user is null)
             {
                 genericResponse.StatusCode = StatusCodes.Status400BadRequest;
@@ -153,12 +153,12 @@ namespace AthliQ.Service.Services.Admin
                 NumberOfPendingUsers = await _unitOfWork
                     .Repository<AthliQUser, string>()
                     .Get(U => U.IsAccepted == false)
-                    .Result.CountAsync(),
+                    .CountAsync(),
 
                 NumberOfUsersApprovedToday = await _unitOfWork
                     .Repository<AthliQUser, string>()
                     .Get(U => U.IsAccepted == true && U.AcceptedDate.Value.Day == DateTime.Now.Day)
-                    .Result.CountAsync(),
+                    .CountAsync(),
                 NumberOfTests = await _unitOfWork
                     .Repository<Test, int>()
                     .GetAllAsyncAsQueryable()
@@ -187,7 +187,7 @@ namespace AthliQ.Service.Services.Admin
             var user = await _unitOfWork
                 .Repository<AthliQUser, string>()
                 .Get(u => u.Id == userId)
-                .Result.FirstOrDefaultAsync();
+                .FirstOrDefaultAsync();
             if (user is null)
             {
                 genericResponse.StatusCode = StatusCodes.Status400BadRequest;

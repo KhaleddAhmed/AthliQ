@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using AthliQ.Core.Repository.Contract;
+﻿using AthliQ.Core.Repository.Contract;
 using AthliQ.Repository.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace AthliQ.Repository.Repositories
 {
@@ -49,7 +44,7 @@ namespace AthliQ.Repository.Repositories
 
         public async Task<IQueryable<T>> GetAllAsyncAsQueryable() => _dbSet.AsNoTracking();
 
-        public async Task<IQueryable<T>> Get(Expression<Func<T, bool>> predict = null)
+        public IQueryable<T> Get(Expression<Func<T, bool>> predict = null)
         {
             return _dbSet.Where(predict);
         }

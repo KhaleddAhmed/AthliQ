@@ -1,5 +1,10 @@
 ﻿using AthliQ.Core;
+using AthliQ.Core.Repository.Contract;
+using AthliQ.Repository.BackgroundJobs;
+using AthliQ.Repository.BodyImageAnalysis;
 using AthliQ.Repository.Data.Contexts;
+using AthliQ.Repository.RuleEngine;
+using Hangfire;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,7 +29,14 @@ namespace AthliQ.Repository
 				return ConnectionMultiplexer.Connect(connection);
 			});
 
-			return Services;
+            Services.AddHangfire(config => config.UseSqlServerStorage(Configuration.GetConnectionString("AthliQConnection")));
+            Services.AddHangfireServer();
+
+            Services.AddScoped<ChildReportJob>();
+
+            Services.AddScoped<IChildReportJobScheduler, ChildReportJobScheduler>();
+
+            return Services;
 		}
 	}
 }
