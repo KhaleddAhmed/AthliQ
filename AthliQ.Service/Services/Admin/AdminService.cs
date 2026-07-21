@@ -114,7 +114,7 @@ namespace AthliQ.Service.Services.Admin
             var genericResponse = new GenericResponse<GetAllUsersToReturnDto>();
             var users = await _unitOfWork
                 .Repository<AthliQUser, string>()
-                .Get(U => U.IsDeleted != true && U.Email != "Ahmed.Abbas@gmail.com")
+                .Get(U => U.IsDeleted != true && U.Email != "Admin.Support@gmail.com")
                 .Result.Skip((pageIndex.Value - 1) * pageSize.Value)
                 .Take(pageSize.Value)
                 .ToListAsync();

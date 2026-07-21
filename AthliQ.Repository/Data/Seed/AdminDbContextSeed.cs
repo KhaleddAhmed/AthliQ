@@ -14,13 +14,13 @@ namespace AthliQ.Repository.Data.Seed
         {
             if (userManager.Users.Count() == 0)
             {
-                var email = "Ahmed.Abbas@gmail.com";
+                var email = "Admin.Support@gmail.com";
                 var admin = new AthliQUser()
                 {
                     Email = email,
                     UserName = email.Split("@")[0],
-                    FirstName = "Ahmed",
-                    LastName = "Abbas",
+                    FirstName = "Admin",
+                    LastName = "Athliq",
                     Address = "12-Dokki-Giza-Egypt",
                     PhoneNumber = "01012313987",
                     Gender = "Male",
