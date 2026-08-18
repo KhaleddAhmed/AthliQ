@@ -27,9 +27,6 @@ namespace AthliQ.Repository.Data.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("AcceptedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
@@ -58,9 +55,6 @@ namespace AthliQ.Repository.Data.Migrations
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsAccepted")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -238,9 +232,7 @@ namespace AthliQ.Repository.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AthliQUserId");
-
-                    b.HasIndex("Name")
+                    b.HasIndex("AthliQUserId", "Name")
                         .IsUnique();
 
                     b.ToTable("Children");

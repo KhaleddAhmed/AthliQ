@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AthliQ.Core.Entities;
+﻿using AthliQ.Core.Entities;
 using Microsoft.AspNetCore.Identity;
 
 namespace AthliQ.Repository.Data.Seed
@@ -23,8 +18,7 @@ namespace AthliQ.Repository.Data.Seed
                     LastName = "Athliq",
                     Address = "12-Dokki-Giza-Egypt",
                     PhoneNumber = "01012313987",
-                    Gender = "Male",
-                    IsAccepted = true,
+                    Gender = "Male"
                 };
 
                 await userManager.CreateAsync(admin, "P@ssw0rd");

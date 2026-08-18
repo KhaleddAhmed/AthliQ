@@ -143,8 +143,8 @@ namespace AthliQ.Service.Services.Tests
 
             var tests = await _unitOfWork
                 .Repository<Test, int>()
-                .GetAllAsyncAsQueryable()
-                .Result.ToListAsync();
+                .GetAllAsQueryable()
+                .ToListAsync();
 
             if (tests.Any())
             {

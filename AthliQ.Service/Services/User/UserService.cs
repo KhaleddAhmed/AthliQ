@@ -77,12 +77,6 @@ namespace AthliQ.Service.Services.User
                 return genericResponse;
             }
 
-            if(user.IsAccepted != true)
-            {
-                genericResponse.StatusCode= StatusCodes.Status400BadRequest;
-                genericResponse.Message = "Admin didn't Accept Your Request Yet";
-                return genericResponse;
-            }
 
             UserDto userDto = new UserDto()
             {
