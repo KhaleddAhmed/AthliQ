@@ -11,7 +11,7 @@ namespace AthliQ.Core.Entities.Models
         public string? ClubName { get; set; }
         #endregion
 
-        #region HealthPolicies
+        #region Health Policies
         public bool IsAgreeDoctorApproval { get; set; } = false;
         public bool IsNormalBloodTest { get; set; } = false;
         #endregion

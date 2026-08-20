@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AthliQ.Core;
+﻿using AthliQ.Core;
 using AthliQ.Core.DTOs.User;
 using AthliQ.Core.Entities;
 using AthliQ.Core.Entities.Models;
@@ -11,7 +6,6 @@ using AthliQ.Core.Responses;
 using AthliQ.Core.Service.Contract;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace AthliQ.Service.Services.Admin
@@ -27,49 +21,6 @@ namespace AthliQ.Service.Services.Admin
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _emailService = emailService;
-        }
-
-        public async Task<GenericResponse<bool>> AcceptUserAsync(string userId)
-        {
-            var genericResponse = new GenericResponse<bool>();
-
-            var user = await _unitOfWork
-                .Repository<AthliQUser, string>()
-                .Get(u => u.Id == userId)
-                .FirstOrDefaultAsync();
-            if (user is null)
-            {
-                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
-                genericResponse.Message = "User Is Not Found";
-                return genericResponse;
-            }
-
-            user.IsAccepted = true;
-            user.AcceptedDate = DateTime.Now;
-
-            _unitOfWork.Repository<AthliQUser, string>().Update(user);
-            var returnedRows = await _unitOfWork.CompleteAsync();
-            var email = new Email()
-            {
-                To = user.Email,
-                Subject = "Your Email has been accepted",
-                Body =
-                    "AthliQ organization has approved your Registration Please Check The Application Again",
-            };
-
-            _emailService.SendEmail(email);
-            if (returnedRows > 0)
-            {
-                genericResponse.StatusCode = StatusCodes.Status200OK;
-                genericResponse.Message = "User Is Accepted";
-                genericResponse.Data = true;
-
-                return genericResponse;
-            }
-
-            genericResponse.StatusCode = StatusCodes.Status200OK;
-            genericResponse.Message = "Could Not Accept This User";
-            return genericResponse;
         }
 
         public async Task<GenericResponse<bool>> DeleteUserAsync(string userId)
@@ -106,10 +57,7 @@ namespace AthliQ.Service.Services.Admin
             return genericResponse;
         }
 
-        public async Task<GenericResponse<GetAllUsersToReturnDto>> GetAllUsersAsync(
-            int? pageIndex,
-            int? pageSize
-        )
+        public async Task<GenericResponse<GetAllUsersToReturnDto>> GetAllUsersAsync(int? pageIndex, int? pageSize)
         {
             var genericResponse = new GenericResponse<GetAllUsersToReturnDto>();
             var users = await _unitOfWork
@@ -136,10 +84,8 @@ namespace AthliQ.Service.Services.Admin
                 GetAllUserDtos = mappedUsers,
                 Count = await _unitOfWork
                     .Repository<AthliQUser, string>()
-                    .GetAllAsyncAsQueryable()
-                    .Result.CountAsync(U =>
-                        U.Email != "Ahmed.Abbas@gmail.com" && U.IsDeleted != true
-                    ),
+                    .GetAllAsQueryable()
+                    .CountAsync(U => U.Email != "Ahmed.Abbas@gmail.com" && U.IsDeleted != true)
             };
 
             return genericResponse;
@@ -150,67 +96,36 @@ namespace AthliQ.Service.Services.Admin
             var genericResponse = new GenericResponse<StatsDto>();
             var stats = new StatsDto()
             {
-                NumberOfPendingUsers = await _unitOfWork
-                    .Repository<AthliQUser, string>()
-                    .Get(U => U.IsAccepted == false)
+                NumberOfUsers = await _unitOfWork
+                     .Repository<AthliQUser, string>()
+                     .GetAllAsQueryable()
+                     .CountAsync(),
+
+                NumberOfChildren = await _unitOfWork
+                    .Repository<Child, int>()
+                    .GetAllAsQueryable()
                     .CountAsync(),
 
-                NumberOfUsersApprovedToday = await _unitOfWork
-                    .Repository<AthliQUser, string>()
-                    .Get(U => U.IsAccepted == true && U.AcceptedDate.Value.Day == DateTime.Now.Day)
-                    .CountAsync(),
                 NumberOfTests = await _unitOfWork
                     .Repository<Test, int>()
-                    .GetAllAsyncAsQueryable()
-                    .Result.CountAsync(),
+                    .GetAllAsQueryable()
+                    .CountAsync(),
+
                 NumberOfCategories = await _unitOfWork
                     .Repository<Category, int>()
-                    .GetAllAsyncAsQueryable()
-                    .Result.CountAsync(),
+                    .GetAllAsQueryable()
+                    .CountAsync(),
+
                 NumberOfSports = await _unitOfWork
                     .Repository<Sport, int>()
-                    .GetAllAsyncAsQueryable()
-                    .Result.CountAsync(),
+                    .GetAllAsQueryable()
+                    .CountAsync(),
             };
 
             genericResponse.StatusCode = StatusCodes.Status200OK;
             genericResponse.Message = "Sucess to retreive stats";
             genericResponse.Data = stats;
 
-            return genericResponse;
-        }
-
-        public async Task<GenericResponse<bool>> RejectUserAsync(string userId)
-        {
-            var genericResponse = new GenericResponse<bool>();
-
-            var user = await _unitOfWork
-                .Repository<AthliQUser, string>()
-                .Get(u => u.Id == userId)
-                .FirstOrDefaultAsync();
-            if (user is null)
-            {
-                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
-                genericResponse.Message = "User Is Not Found";
-                return genericResponse;
-            }
-
-            user.IsAccepted = false;
-
-            _unitOfWork.Repository<AthliQUser, string>().Update(user);
-            var returnedRows = await _unitOfWork.CompleteAsync();
-
-            if (returnedRows > 0)
-            {
-                genericResponse.StatusCode = StatusCodes.Status200OK;
-                genericResponse.Message = "User Is Rejected";
-                genericResponse.Data = true;
-
-                return genericResponse;
-            }
-
-            genericResponse.StatusCode = StatusCodes.Status200OK;
-            genericResponse.Message = "Could Not Reject This User";
             return genericResponse;
         }
     }

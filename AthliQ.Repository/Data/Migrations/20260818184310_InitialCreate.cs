@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AthliQ.Repository.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class FinalMigration : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -34,7 +34,6 @@ namespace AthliQ.Repository.Data.Migrations
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsAccepted = table.Column<bool>(type: "bit", nullable: false),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -196,13 +195,14 @@ namespace AthliQ.Repository.Data.Migrations
                     ClubName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsAgreeDoctorApproval = table.Column<bool>(type: "bit", nullable: false),
                     IsNormalBloodTest = table.Column<bool>(type: "bit", nullable: false),
-                    SportHistoryId = table.Column<int>(type: "int", nullable: false),
+                    SportHistoryId = table.Column<int>(type: "int", nullable: true),
                     ParentSportHistoryId = table.Column<int>(type: "int", nullable: false),
                     SportPreferenceId = table.Column<int>(type: "int", nullable: false),
                     Height = table.Column<double>(type: "float", nullable: false),
                     Weight = table.Column<double>(type: "float", nullable: false),
                     ImageFrontURL = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageSideURL = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsNormalBodyImage = table.Column<bool>(type: "bit", nullable: false),
                     AthliQUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -395,14 +395,9 @@ namespace AthliQ.Repository.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Children_AthliQUserId",
+                name: "IX_Children_AthliQUserId_Name",
                 table: "Children",
-                column: "AthliQUserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Children_Name",
-                table: "Children",
-                column: "Name",
+                columns: new[] { "AthliQUserId", "Name" },
                 unique: true);
 
             migrationBuilder.CreateIndex(

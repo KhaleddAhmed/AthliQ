@@ -42,7 +42,7 @@ namespace AthliQ.Repository.Repositories
             _athliQDbContext.Remove(entity);
         }
 
-        public async Task<IQueryable<T>> GetAllAsyncAsQueryable() => _dbSet.AsNoTracking();
+        public IQueryable<T> GetAllAsQueryable() => _dbSet.AsNoTracking();
 
         public IQueryable<T> Get(Expression<Func<T, bool>> predict = null)
         {

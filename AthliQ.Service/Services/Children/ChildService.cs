@@ -78,15 +78,18 @@ namespace AthliQ.Service.Services.Children
                 return genericResponse;
             }
 
-            var sportHistory = await _unitOfWork
-                .Repository<Sport, int>()
-                .GetAsync(createChildDto.SportHistoryId);
-            if (sportHistory is null)
+            if (createChildDto.SportHistoryId.HasValue)
             {
-                genericResponse.StatusCode = StatusCodes.Status400BadRequest;
-                genericResponse.Message = "Invalid sport History";
+                var sportHistory = await _unitOfWork
+                       .Repository<Sport, int>()
+                       .GetAsync(createChildDto.SportHistoryId.Value);
+                if (sportHistory is null)
+                {
+                    genericResponse.StatusCode = StatusCodes.Status400BadRequest;
+                    genericResponse.Message = "Invalid sport History";
 
-                return genericResponse;
+                    return genericResponse;
+                } 
             }
 
             var parentSportHistory = await _unitOfWork
@@ -641,12 +644,7 @@ namespace AthliQ.Service.Services.Children
             return genericResponse;
         }
 
-        public async Task<GenericResponse<GetAllChildWithTotalCountDto>> ViewAllChildrenAsync(
-            string userId,
-            string? search,
-            int? pageSize = 5,
-            int? pageIndex = 1
-        )
+        public async Task<GenericResponse<GetAllChildWithTotalCountDto>> ViewAllChildrenAsync(string userId, string? search, int? pageSize = 5, int? pageIndex = 1)
         {
             var genericResponse = new GenericResponse<GetAllChildWithTotalCountDto>();
             List<GetAllChildDto> getAllChildDtos = new List<GetAllChildDto>();

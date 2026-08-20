@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AthliQ.Repository.Data.Migrations
 {
     [DbContext(typeof(AthliQDbContext))]
-    [Migration("20250612183904_AddingIsNormalBodyImageColumnInChildrenTable")]
-    partial class AddingIsNormalBodyImageColumnInChildrenTable
+    [Migration("20260818184310_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -29,9 +29,6 @@ namespace AthliQ.Repository.Data.Migrations
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("AcceptedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -61,9 +58,6 @@ namespace AthliQ.Repository.Data.Migrations
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsAccepted")
-                        .HasColumnType("bit");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -241,9 +235,7 @@ namespace AthliQ.Repository.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AthliQUserId");
-
-                    b.HasIndex("Name")
+                    b.HasIndex("AthliQUserId", "Name")
                         .IsUnique();
 
                     b.ToTable("Children");
