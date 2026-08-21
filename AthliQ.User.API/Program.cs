@@ -7,6 +7,7 @@ using AthliQ.Repository.RuleEngine;
 using AthliQ.Service;
 using AthliQ.Service.Helpers;
 using AthliQ.Service.Services.Mail;
+using AthliQ.User.API.CustomMiddleWares;
 using AthliQ.User.API.Extensions;
 using Hangfire;
 
@@ -66,6 +67,8 @@ namespace AthliQ.User.API
             }
 
             app.UseHttpsRedirection();
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
+
             app.UseStaticFiles();
 
             app.UseAuthentication();
